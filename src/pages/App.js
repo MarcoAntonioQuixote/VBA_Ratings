@@ -13,17 +13,7 @@ class App extends Component {
 		super(props);
 		
 		this.state = {
-			players: [
-				["1034","","","","","",false,""],
-				["207","","","","","",false,""],
-				["205","","","","","",false,""],
-				["310","","","","","",false,""],
-				["304","","","","","",false,""],
-				["308","","","","","",false,""],
-				["309","","","","","",false,""],
-				["004","","","","","",false,""],
-				["312","","","","","",false,""],
-			]
+			players: [],
 		}
 
 		this.orderPlayers = this.orderPlayers.bind(this);

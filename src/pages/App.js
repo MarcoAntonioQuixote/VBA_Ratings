@@ -4,6 +4,9 @@ import Header from './Header';
 import Players from "./Players";
 import Rate from './Rate';
 import RaterHome from './RaterHome';
+import AdminHome from './AdminHome';
+import Raters from './Raters';
+import InviteRaters from './InviteRaters';
 import logo from '../images/vbaLogo.png';
 import '../styles.css';
 import SubmitRatings from './SubmitRatings';
@@ -13,10 +16,27 @@ class App extends Component {
 		super(props);
 		
 		this.state = {
-			players: [],
+			players: [
+				["1034","","","","","",false,""],
+				["207","","","","","",false,""],
+				["205","","","","","",false,""],
+				["310","","","","","",false,""],
+				["304","","","","","",false,""],
+				["308","","","","","",false,""],
+				["309","","","","","",false,""],
+				["004","","","","","",false,""],
+				["312","","","","","",false,""],
+			],
+			raters: [
+				["Samuel","strive2thrivetutoring@gmail.com"],
+				["Chris","mr.markgutierrez@gmail.com"],
+				["Michael","pakawe4448@musezoo.com"],
+			],
+			startedSession: true, //should be false
 		}
 
 		this.orderPlayers = this.orderPlayers.bind(this);
+		this.startSession = this.startSession.bind(this);
 	}
 
 	orderPlayers = () => {
@@ -38,6 +58,25 @@ class App extends Component {
 		},() => console.log("The state of the main app: ", this.state));
 	}
 
+	updateRaters = (adding,rater) => {
+		if (adding) {
+			this.setState({
+				raters: [...this.state.raters, rater],
+			})
+		} else {
+			const raters = this.state.raters.filter(thisRater => thisRater[0] !== rater[0]);
+			this.setState({
+				raters: raters,
+			})
+		}
+	}
+
+	startSession = () => {
+		this.setState({
+			startedSession: true
+		})
+	}
+
 	componentDidMount() {
 		this.orderPlayers();
 	}
@@ -45,12 +84,13 @@ class App extends Component {
 	render () {
 
 		const players = this.state.players;
+		const raters = this.state.raters;
+		const started = this.state.startedSession;
 
 		const updatePlayers = (players) => {
 			this.setState({
 				players: players,
 			},()=>this.orderPlayers());
-			;
 		}
 
 		const updateRatings = (savedRatings,skill) => {
@@ -81,9 +121,12 @@ class App extends Component {
 
 	return (
 		<div className='App'>
-			<Header logo={logo}/>
+			<Header logo={logo} started={started}/>
 			<Routes>
-				<Route path='/' element={<RaterHome players={players}/>}/>
+				<Route path='/' element={<AdminHome players={players} raters={raters} start={this.startSession} started={started}/>}/>
+				<Route path='/raters' element={<Raters raters={raters} updateRaters={this.updateRaters}/>}/>
+				<Route path='/inviteRaters' element ={<InviteRaters players={players} raters={raters}/>}/>
+				<Route path='/raterHome' element={<RaterHome players={players}/>}/>
 				
 				<Route path='addPlayer' element={<Players players={players} update={updatePlayers}/>} />
 				<Route path='subPlayer' element={<Players players={players} update={updatePlayers} fromHome={true}/>} />
@@ -104,5 +147,6 @@ Rate: Ratings should be #s from 0-10;
 Toggle Even/Odds
 On Submit page: It says please finish rating even though it was finished (all entries were done);
 
+//The function for raters to add players *after* the fact might be super tricky
 
 */

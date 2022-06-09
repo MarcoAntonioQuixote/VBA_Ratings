@@ -1,7 +1,7 @@
 import React from "react";
 import {Input, UncontrolledTooltip} from 'reactstrap';
 
-function ListPlayers({players,deletePlayer,skillToShow,withData,raterNotes}) {
+function ListPlayers({players,deletePlayer,skillToShow,withData,raterNotes,oddsEvens,onChange}) {
 
     //players = array of player #s
     //deletePlayer = parent function to delete player from parent state
@@ -43,6 +43,11 @@ function ListPlayers({players,deletePlayer,skillToShow,withData,raterNotes}) {
 
     if (skillToShow) {
         list = players.map(player => {
+        if (oddsEvens === "Odds" && player[0]%2 === 0) {
+            return;
+        } else if (oddsEvens === "Evens" && player[0]%2 === 1) {
+            return;
+        }
         if (withData) {
             index = players.indexOf(player);
             playerRating = withData[index];
@@ -62,27 +67,27 @@ function ListPlayers({players,deletePlayer,skillToShow,withData,raterNotes}) {
                     <div className="col"><h2>{player[0]}</h2></div>
                     {skillToShow == "Serving" ? 
                         <div className={`col ${skillToShow}Input`}>
-                            <Input defaultValue={playerRating} type="numeric" style={{width: '50%'}} />
+                            <Input defaultValue={playerRating} type="number" step=".01" min="0" max="10" style={{width: '100%'}} onChange={(e)=>onChange(e)} />
                         </div> : null
                     }
                     {skillToShow == "Passing/Setting" ? 
                         <div className={`col ${skillToShow}Input`}>
-                            <Input defaultValue={playerRating} type="numeric" style={{width: '50%'}} />
+                            <Input defaultValue={playerRating} type="number" step=".01" min="0" max="10" style={{width: '100%'}} onChange={(e)=>onChange(e)}/>
                         </div> : null
                     }
                     {skillToShow == "Defense" ? 
                         <div className={`col ${skillToShow}Input`}>
-                            <Input defaultValue={playerRating} type="numeric" style={{width: '50%'}} />
+                            <Input defaultValue={playerRating} type="number" step=".01" min="0" max="10" style={{width: '100%'}} onChange={(e)=>onChange(e)}/>
                         </div> : null
                     }
                     {skillToShow == "Attacking" ? 
                         <div className={`col ${skillToShow}Input`}>
-                            <Input defaultValue={playerRating} type="numeric" style={{width: '50%'}} />
+                            <Input defaultValue={playerRating} type="number" step=".01" min="0" max="10" style={{width: '100%'}} onChange={(e)=>onChange(e)}/>
                         </div> : null
                     }
                     {skillToShow == "Blocking" ? 
                         <div className={`col ${skillToShow}Input`}>
-                            <Input defaultValue={playerRating} type="numeric" style={{width: '50%'}} />
+                            <Input defaultValue={playerRating} type="number" step=".01" min="0" max="10" style={{width: '100%'}} onChange={(e)=>onChange(e)}/>
                         </div> : null
                     }
                 </div>

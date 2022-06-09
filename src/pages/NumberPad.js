@@ -8,16 +8,24 @@ class NumberPad extends Component {
         this.state = {
             entry: "",
             firstClick: true,
-            functionalInput: null,
         }
         // this.BibEntry = this.BibEntry.bind(this); ?? Need?
         
     }
 
-    BibEntry = (num,del) => {
+    BibEntry = (num,del,dec) => {
         if (del) {
             this.setState({
                 entry: this.state.entry.slice(0,-1),
+            });
+            return;
+        }
+        if (dec) {
+            if (this.state.entry.includes(".")) {
+                return;
+            }
+            this.setState({
+                entry: this.state.entry + ".",
             });
             return;
         }
@@ -26,7 +34,11 @@ class NumberPad extends Component {
         });
     }
 
-    functionForButton = (passedFunction) => {
+    functionForButton = (passedFunction,cancel) => {
+        if (cancel) {
+            passedFunction("cancel");
+            return;
+        }
         //This appears to be a complicated process/idea. The short concept is this:
             //The numPad will be needed on various pages (but what it does may need to change)
             //So you are striving to pass it a funciton that is used whenever one of the bottom buttons is clicked, what that button will do, however, will depend on the funciton passed here.
@@ -59,12 +71,23 @@ class NumberPad extends Component {
                         <Button className="col" color="dark" onClick={() => this.BibEntry(8)}>8</Button>
                         <Button className="col" color="dark" onClick={() => this.BibEntry(9)}>9</Button>
                     </div>
-                    <div className="row">
-                        <Button className="col" color="warning" onClick={() => this.BibEntry(null,true)}>⬅️</Button>
-                        <Button className="col" color="dark" onClick={() => this.BibEntry(0)}>0</Button>
-                        <Button className="col" color="info" 
-                        onClick={() => this.functionForButton(this.props.functionToPass)}>➕ Player</Button>
-                    </div>
+                    { !this.props.updateRatings ?
+                        <div className="row">
+                            <Button className="col" color="warning" onClick={() => this.BibEntry(null,true)}>⬅️</Button>
+                            <Button className="col" color="dark" onClick={() => this.BibEntry(0)}>0</Button>
+                            <Button className="col" color="info" 
+                            onClick={() => this.functionForButton(this.props.functionToPass)}>➕ Player</Button>
+                        </div> :
+                        <div className="row">
+                            <Button className="col-2" color="warning" onClick={() => this.BibEntry(null,true)}>⬅️</Button>
+                            <Button className="col-2" color="info" onClick={() => this.BibEntry(null,null,true)}><strong>.</strong></Button>
+                            <Button className="col" color="dark" onClick={() => this.BibEntry(0)}>0</Button>
+                            <Button className="col-2" color="danger" 
+                            onClick={() => this.functionForButton(this.props.functionToPass,true)}>Cancel</Button>
+                            <Button className="col-2" color="success" 
+                            onClick={() => this.functionForButton(this.props.functionToPass)}>Save</Button>
+                        </div>
+                    }
                 </div>
             </>
         )

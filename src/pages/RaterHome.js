@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, Routes, Route} from 'react-router-dom';
 import {Button} from 'reactstrap';
 
 class RaterHome extends Component {
@@ -7,11 +7,13 @@ class RaterHome extends Component {
         super(props)
         
         this.state = {
-            players: props.players,
+            players: props.players, //might have to fetch from a server
         }
     }
 
     render() {
+
+        const players = this.state.players;
 
         return (
             <div>
@@ -38,7 +40,7 @@ class RaterHome extends Component {
                 </div>
                 <div className='header'>
                     <h2>Review your ratings</h2>
-                    <Link to="/submit">
+                    <Link to="/review">
                         <Button color="success" size='lg'>Review 🏐</Button>
                     </Link>
                 </div>

@@ -12,9 +12,14 @@ class Rate extends Component {
             skill: "Skill",
             players: this.props.players,
             modalOpen: false,
+            saveModalOpen: false,
             notesFor: [],
+            oddsEvens: "",
+            playersToShow: this.props.players,
+            dataToSave: false,
         }
         this.toggle = this.toggle.bind(this);
+        this.ratingsInputted = this.ratingsInputted.bind(this);
         this.saveRatings = this.saveRatings.bind(this);
         this.submitRatings = this.submitRatings.bind(this);
         this.reUpdateRatings = this.reUpdateRatings.bind(this);
@@ -25,43 +30,99 @@ class Rate extends Component {
     }
 
     toggle(toggle, skill) {
-        if (toggle) {
-            this.setState({
-                dropdownOpen: !this.state.dropdownOpen,
-            });
-        }
-        else {
-            this.setState({
-                skill: skill,
-            });
-            switch (skill){
-                case "Serving":
-                    this.setState({dataToPass: this.state.scoresInServing,})
-                    break;
-                case "Passing/Setting":
-                    this.setState({dataToPass: this.state.scoresInPassSet,})
-                    break;
-                case "Defense":
-                    this.setState({dataToPass: this.state.scoresInDefense,})
-                    break;
-                case "Attacking":
-                    this.setState({dataToPass: this.state.scoresInAttacking,})
-                    break;   
-                case "Blocking":
-                    this.setState({dataToPass: this.state.scoresInBlocking,})
-                    break;              
+        console.log(toggle,skill,this.state.stayInSkill);
+        if (this.state.dataToSave === false) {
+            if (toggle) {
+                this.setState({
+                    dropdownOpen: !this.state.dropdownOpen,
+                }) 
+            }
+            if (skill) {
+                switch (skill){
+                    case "Serving":
+                        this.setState({dataToPass: this.state.scoresInServing,})
+                        break;
+                    case "Passing/Setting":
+                        this.setState({dataToPass: this.state.scoresInPassSet,})
+                        break;
+                    case "Defense":
+                        this.setState({dataToPass: this.state.scoresInDefense,})
+                        break;
+                    case "Attacking":
+                        this.setState({dataToPass: this.state.scoresInAttacking,})
+                        break;   
+                    case "Blocking":
+                        this.setState({dataToPass: this.state.scoresInBlocking,})
+                        break;              
+                }
+                this.setState({
+                    skill: skill,
+                }, () => console.log("state after selection: ", this.state));
+            }
+        } else {
+            if (this.state.stayInSkill !== false) {
+                this.setState({
+                    saveModalOpen: true, //ask the question
+                })
+                console.log("opening here?");
+            } else if (toggle) {
+                this.setState({
+                    dropdownOpen: !this.state.dropdownOpen,
+                })
+            }
+
+            else if (skill && this.state.stayInSkill === false) {
+                switch (skill){
+                    case "Serving":
+                        this.setState({dataToPass: this.state.scoresInServing,})
+                        break;
+                    case "Passing/Setting":
+                        this.setState({dataToPass: this.state.scoresInPassSet,})
+                        break;
+                    case "Defense":
+                        this.setState({dataToPass: this.state.scoresInDefense,})
+                        break;
+                    case "Attacking":
+                        this.setState({dataToPass: this.state.scoresInAttacking,})
+                        break;   
+                    case "Blocking":
+                        this.setState({dataToPass: this.state.scoresInBlocking,})
+                        break;              
+                }
+                this.setState({
+                    skill: skill,
+                    dropdownOpen: false,
+                    stayInSkill: null,
+                    dataToSave: false,
+                }, () => console.log("state after selection: ", this.state));
             }
         }
     }
 
+    ratingsInputted(event) {
+        let value = event.target.value;
+        if (value < 0) {alert("Enter a rating higher than 0️⃣ 😇")};
+        if (value > 10) {alert("Enter a rating lower than 1️⃣0️⃣ 😈")};
+        this.setState({dataToSave: true});
+    }
+
     saveRatings(e,saveRatingsInMain) {
+        e.preventDefault();
         let submission = [];
         let players = this.state.players;
+        let enteredRatings = 0;
+        let playersToSaveFor = this.state.playersToShow;
         let saveToMain = new Array(6); //bib# and ratings for 5 skills
-        for (let r = 0; r < e.target.length-1; r++) {
-            submission.push(e.target[r].value); //Had to find this value in the event object questions on the minus 1, is it actually grabbing ALL of the ratings for each player
+        
+        for (let p = 0; p < players.length; p++) {
+            if (players[p][0] === playersToSaveFor[enteredRatings][0]) {
+                submission.push(e.target[enteredRatings].value);
+                if (enteredRatings < playersToSaveFor.length-1) {
+                    enteredRatings++;
+                }
+            } else { submission.push(null); }
         }
-        e.preventDefault();
+
         for (let p = 0; p < players.length; p++) {
 
             switch (this.state.skill){
@@ -87,7 +148,7 @@ class Rate extends Component {
                     break;              
             };
         }
-
+        this.setState({dataToSave: false});
         saveRatingsInMain(saveToMain,this.state.skill);
     }
 
@@ -124,7 +185,6 @@ class Rate extends Component {
 
         this.setState({
             finalPlayerResults: organizingData,
-            // displayResults: displayResults,
         });
         updateRatings(null,null,organizingData); //function passed from main app
     }
@@ -191,8 +251,32 @@ class Rate extends Component {
     }
 
     onRadioBtnClick(selected) {
-        console.log(selected);
-        this.setState({oddsEvens: selected});
+        let oddsPlayers = [];
+        let evensPlayers = this.state.players.filter(player => {
+            if (player[0]%2 == 1) {
+                oddsPlayers.push(player);
+            } else { return player }
+        });
+        switch (selected) {
+            case 1: 
+                this.setState({
+                    oddsEvens: "Odds",
+                    playersToShow: oddsPlayers,
+                });
+                break;
+            case 2:
+                this.setState({
+                    oddsEvens: "Evens",
+                    playersToShow: evensPlayers,
+                });
+                break;
+            case 3:
+                this.setState({
+                    oddsEvens: "All",
+                    playersToShow: this.state.players,
+                });
+                break;
+        }
       }
    
     componentDidMount() {
@@ -201,6 +285,7 @@ class Rate extends Component {
 
     render() {
         const players = this.state.players;
+        const playerNum = this.state.playersToShow.length;
         const skills = 
             <ButtonDropdown  color='success' isOpen={this.state.dropdownOpen} toggle={() => this.toggle(true)}>
                 <DropdownToggle caret color="info" style={{marginTop: "5px"}}>
@@ -219,44 +304,69 @@ class Rate extends Component {
                     Blocking </DropdownItem>
                 </DropdownMenu>
             </ButtonDropdown>
+        const oddsEvens = 
+            <ButtonGroup style={{marginBottom: "25px"}}>
+                <Button color="light" onClick={() => this.onRadioBtnClick(1)} active={this.state.oddsEvens === 1}>Odds</Button>
+                <Button color="light" onClick={() => this.onRadioBtnClick(2)} active={this.state.oddsEvens === 2}>Evens</Button>
+                <Button color="dark" onClick={() => this.onRadioBtnClick(3)} active={this.state.oddsEvens === 3}>All</Button>
+            </ButtonGroup>
         const modal = 
-                <Modal isOpen={this.state.modalOpen}>
-                    <ModalHeader toggle={this.toggleModal}>Your notes on #{this.state.notesFor[0]}:</ModalHeader>
-                    <ModalBody>
-                        <Form onSubmit={(event) => this.saveNotes(event,this.state.notesFor)}>
-                            <FormGroup>
-                                <Input type="textarea" rows={3}
-                                    defaultValue={this.state.notesFor[7]}
-                                    innerRef={input => this.notes = input} />
-                            </FormGroup>
-                            <Button type="submit" value="submit" color="primary">Save</Button>
-                            {' '}
-                            <Button onClick={() => this.toggleNotes()}> Cancel </Button>
-                        </Form>
-                    </ModalBody>
-                </Modal>
-                
+            <Modal isOpen={this.state.modalOpen}>
+                <ModalHeader>Your notes on #{this.state.notesFor[0]}:</ModalHeader>
+                <ModalBody>
+                    <Form onSubmit={(event) => this.saveNotes(event,this.state.notesFor)}>
+                        <FormGroup>
+                            <Input type="textarea" rows={3}
+                                defaultValue={this.state.notesFor[7]}
+                                innerRef={input => this.notes = input} />
+                        </FormGroup>
+                        <Button type="submit" value="submit" color="primary">Save</Button>
+                        {' '}
+                        <Button onClick={() => this.toggleNotes()}> Cancel </Button>
+                    </Form>
+                </ModalBody>
+            </Modal>
+        const saveModal = 
+            <Modal isOpen={this.state.saveModalOpen}>
+                <ModalHeader>Do you wish to continue without saving? </ModalHeader>
+                <ModalBody>
+                    <Button style={{marginRight: "30px"}}color='danger' onClick={()=> {this.setState({
+                        stayInSkill: false, 
+                        saveModalOpen: false, 
+                        dropdownOpen: true}, 
+                        ()=>console.log(this.state))}}>
+                    Yes</Button>
+                    <Button color='success' onClick={()=> {this.setState({
+                        stayInSkill: true, 
+                        saveModalOpen: false, 
+                        dropdownOpen: false}, 
+                        ()=>console.log(this.state))}}>
+                    No</Button>
+                </ModalBody>
+            </Modal>   
+
         return (
             <div className='rateHeader'>
-                <h2>Ready to start rating {players.length} players on {skills} ?</h2> 
+                <h2>Which player numbers are you rating?</h2>
+                {oddsEvens} 
+                { this.state.oddsEvens == "All" ?
+                    <h2>Enter your ratings for All {playerNum} Players on {skills} : </h2> :
+                    <h2>Enter your ratings for the {playerNum} {this.state.oddsEvens} Players on {skills} :</h2> 
+                }
                 <Form id='ratingsForm' onSubmit={(event) => this.saveRatings(event,this.props.updateRatings)}>
                     <ListPlayers 
                         players={players} 
+                        onChange={this.ratingsInputted}
                         skillToShow={this.state.skill} 
                         withData={this.state.dataToPass} 
-                        raterNotes={this.raterNotes}/>
+                        raterNotes={this.raterNotes}
+                        oddsEvens={this.state.oddsEvens} />
                     <Button className='header' color='success'> Save </Button>
                 </Form>
 
-                <Link to="/submit"><Button color='light' onClick={() => this.submitRatings(this.props.updateRatings)}> Review Values </Button></Link>
+                <Link to="/review"><Button color='light' onClick={() => this.submitRatings(this.props.updateRatings)}> Review Values </Button></Link>
                 {modal}
-                <div>
-                    <ButtonGroup>
-                        <Button outline color="light" onClick={() => this.onRadioBtnClick(1)} active={this.state.oddsEvens === 1}>Odds</Button>
-                        <Button outline color="light" onClick={() => this.onRadioBtnClick(2)} active={this.state.oddsEvens === 2}>Evens</Button>
-                        <Button outline color="danger" onClick={() => this.onRadioBtnClick(3)} active={this.state.oddsEvens === 3}>All</Button>
-                    </ButtonGroup>
-                </div>
+                {saveModal}
             </div>
         )
     }

@@ -100,9 +100,9 @@ class Rate extends Component {
     }
 
     ratingsInputted(event) {
-        let value = event.target.value;
-        if (value < 0) {alert("Enter a rating higher than 0️⃣ 😇")};
-        if (value > 10) {alert("Enter a rating lower than 1️⃣0️⃣ 😈")};
+        // let value = event.target.value;
+        // if (value < 0) {alert("Enter a rating higher than 0️⃣ 😇")};
+        // if (value > 10) {alert("Enter a rating lower than 1️⃣0️⃣ 😈")};
         this.setState({dataToSave: true});
     }
 
@@ -361,10 +361,16 @@ class Rate extends Component {
                         withData={this.state.dataToPass} 
                         raterNotes={this.raterNotes}
                         oddsEvens={this.state.oddsEvens} />
-                    <Button className='header' color='success'> Save </Button>
+                    <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "row"}}>
+
+                        <Button className='header' color='success' size="lg" style={{marginRight: "5%"}} > Save </Button>
+        
+                        <Link to="/review"><Button color='primary' onClick={() => this.submitRatings(this.props.updateRatings)} size="lg"> Review Values </Button></Link>
+                    </div>
+
                 </Form>
 
-                <Link to="/review"><Button color='light' onClick={() => this.submitRatings(this.props.updateRatings)}> Review Values </Button></Link>
+
                 {modal}
                 {saveModal}
             </div>

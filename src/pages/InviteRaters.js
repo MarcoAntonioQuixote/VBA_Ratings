@@ -70,33 +70,40 @@ class InviteRaters extends Component {
         return (
             <div>
                 {!this.state.invitationsSent? 
+                    <h2 className="header" style={{paddingInline: "20%"}}>Review the Raters and Players in your Ratings Session</h2> : 
                     <div className='header'>
-                        <h1 className='header'>Total Players: {players.length}</h1>
-                        {playersList}
-                        <h1 className='header'>Total Raters: {raters.length}</h1>
+                        <h1>An email has been sent to the following raters: </h1>
                         {this.state.seeEmails ? 
                             <div>{ratersEmails}</div> : 
-                            <div>{ratersList}</div>}
-                        <h6 style={{paddingInline: "20%", marginTop: "5%"}}>Click send to invite your raters to join in today's rating session. They'll receive emails so they can automatically link into the session. </h6> 
-                    </div> : 
-                    <div className='header'>
-                        <h1 className='header'>An email has been sent to the following raters: </h1>
-                        { this.state.seeEmails ? 
-                            <div>{ratersEmails}</div> : 
-                            <div>{ratersList}</div> }
+                            <div>{ratersList}</div>
+                        }
                     </div>
+                
                 }
-                <div className='header'>
+                {!this.state.invitationsSent?
+                    <div className='header'>
+                        <h1>Total Raters: {raters.length}</h1>
+                        {this.state.seeEmails ? 
+                            <div>{ratersEmails}</div> : 
+                            <div>{ratersList}</div>
+                        }
+                        <h1 className='header'>Total Players: {players.length}</h1>
+                        {playersList}
+                        <h6 style={{marginTop: "5%"}}>Click send to invite your raters to join in today's rating session. They'll receive emails so they can automatically link into the session. </h6> 
+                    </div>
+                    : null
+                }
+                <div className='header' style={{marginTop: "0px", marginBottom: "20px"}}>
                     <div className="row">
                         <div className="col">
-                            <Button color="warning" size='lg' onClick={() => this.toggleEmails()}>👀📧s</Button>
+                            <Button color="warning" size='lg' onClick={() => this.toggleEmails()}>Check 👀📧</Button>
                         </div>
                         <div className="col"><Link to="/">
-                            <Button color="danger" size='lg'>Edit 📃</Button></Link>
+                            <Button color="danger" size='lg'>Edit ✒️</Button></Link>
                         </div>
                         <div className="col"> 
                             { this.state.invitationsSent ? 
-                                <Link to="/raterHome"><Button color= "success" size='lg'>Rate 🔥</Button></Link> :
+                                <Link to="/raterHome"><Button color= "success" size='lg'>Start 🔥</Button></Link> :
                                 <Button color="success" size='lg' onClick={() => this.sendInvites()}>Send 📨</Button>
                             }
                         </div>

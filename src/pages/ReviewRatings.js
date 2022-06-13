@@ -255,7 +255,7 @@ class ReviewRatings extends Component {
                     { players.length > 0? 
                         <FinalDisplay results={players}/> : null }
                     {!allComplete ? 
-                        <h6>Click on any entered rating to change its value. <br/> Or click Rate 🔥 to enter your ratings for {this.state.oddsEvensSelect} players.</h6> : null }
+                        <h6>Click on any entered rating to change its value. Or click Rate 🔥 to enter your ratings for {this.state.oddsEvensSelect} players.</h6> : null }
                     <div className="row">
                         <div className="col">
                             <Link to="/rate">

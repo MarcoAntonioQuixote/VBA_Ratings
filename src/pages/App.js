@@ -18,20 +18,20 @@ class App extends Component {
 		
 		this.state = {
 			players: [
-				// ["1034","","","","","",false,""],
-				// ["207","","","","","",false,""],
-				// ["205","","","","","",false,""],
-				// ["310","","","","","",false,""],
-				// ["304","","","","","",false,""],
-				// ["308","","","","","",false,""],
-				// ["309","","","","","",false,""],
-				// ["004","","","","","",false,""],
-				// ["312","","","","","",false,""],
+				["1034","","","","","",false,""],
+				["207","","","","","",false,""],
+				["205","","","","","",false,""],
+				["310","","","","","",false,""],
+				["304","","","","","",false,""],
+				["308","","","","","",false,""],
+				["309","","","","","",false,""],
+				["004","","","","","",false,""],
+				["312","","","","","",false,""],
 			],
 			raters: [
-				// ["Samuel","strive2thrivetutoring@gmail.com"],
-				// ["Chris","mr.markgutierrez@gmail.com"],
-				// ["Michael","pakawe4448@musezoo.com"],
+				["Samuel","strive2thrivetutoring@gmail.com"],
+				["Chris","mr.markgutierrez@gmail.com"],
+				["Michael","pakawe4448@musezoo.com"],
 			],
 			startedSession: true, //should be false
 			oddsEvens: "All" //*** changes in Rater Mode
@@ -151,11 +151,7 @@ export default App;
 
 /*
 On mobile devices: what's the equivalent of mouse over/hover?
-.
-•	Verify the email address at rater’s input
-•	When finalizing the rating session, put raters above players, and instructions above that. 
-o	Maybe keep the buttons up top?
-•	The skill button was separated from the colon, keep them together!
+
 •	Save button should notify that a message was saved for feedback!
 •	Review should do the same thing as clicking toggle!
 

@@ -59,7 +59,7 @@ class Raters extends Component {
                 <div className="header">
                     <Form onSubmit={(event) => addRater(event)}>
                         <Input placeholder={this.state.defaultName}></Input>
-                        <Input placeholder={this.state.defaultEmail}></Input>
+                        <Input type="email" placeholder={this.state.defaultEmail}></Input>
                         <div className="row">
                             <div className="col-5 offset-1">
                                 <Button color="success" size='lg' type='submit'> ➕ Rater 🙋🏽🙋🏾‍♂️🙋🏼‍♀️</Button>

@@ -69,9 +69,9 @@ class AdminHome extends Component {
                         </div>
                         <div className='container'>
                             { players.length == 0 || raters.length == 0 ?
-                                <Button color="danger" size='lg' onClick={()=> alertAdmin()}> Start the Rating Session 🔥</Button> :
+                                <Button color="primary" size='lg' onClick={()=> alertAdmin()}> Continue 🔥</Button> :
                                 <Link to="/inviteRaters">
-                                    <Button color="danger" size='lg'> Start the Rating Session 🔥</Button>
+                                    <Button color="primary" size='lg'> Continue 🔥</Button>
                                 </Link>
                             }
 

@@ -24,103 +24,73 @@ class InviteRaters extends Component {
 
     sendInvites = () => {
         const session = this.state.session;
-        console.log(session.id);
+        console.log("session: ", session);
 
-        if (session.id) {
-            console.log("You have a loaded session!")
-        } else {
-            fetch("/sessions").then(res => {
+        const sessionObject = {
+            date: session.date || date,
+            color: "danger",
+            completed: false,
+            players: this.state.players, //dont forget to change schema and refresh server with every update!
+        }
+
+        if (session._id) {
+            console.log("You have a loaded session! ", session);
+            fetch("/session").then(res => {
                 console.log("res is: ", res);
                 if(res.ok) { return res.json()}
             })
                 .then(jsonRes => {
                     console.log("JSON: ",jsonRes);
-                //     return jsonRes;
-                // })
-                // .then(jsonRes => {
-                    const sessionObject = {//dont forget to change the schema under model and under routes!! (Also had to reset the server)
-                        id: jsonRes.length,
-                        date: date,
-                        color: "danger",
-                        completed: false,
-                        players: this.state.players,
-                        raters: this.state.raters.map(rater => {
-                            let emailTemplate = {
-                                name: rater[0],
-                                email: rater[1],
-                                message: "Change these instructions later. Most likely, you should have some sort of web link here so that raters can follow that link to the rating app created just for them. Good luck, amigo!",
-                                date: date,
+                    sessionObject.id = session.id; 
+                    sessionObject.raters = this.state.raters.map(rater => {
+                        let emailTemplate = {
+                            name: rater[0],
+                            email: rater[1],
+                            message: "Change these instructions later. Most likely, you should have some sort of web link here so that raters can follow that link to the rating app created just for them. Good luck, amigo!",
+                            date: date,
                         }
-                            // emailjs.send('service_kc8f3pz','VBA_rater_invite', emailTemplate,'-ddp6NqroMoy1LpaE')
-                            // .then(function(response) {
-                            //     console.log('SUCCESS!', response.status, response.text);
-                            // }, function(error) {
-                            //     console.log('FAILED...', error);
-                            // });
-    
-                            return rater;
-                        }),
-    
-                    }
+                        // emailjs.send('service_kc8f3pz','VBA_rater_invite', emailTemplate,'-ddp6NqroMoy1LpaE')
+                        // .then(function(response) {
+                        //     console.log('SUCCESS!', response.status, response.text);
+                        // }, function(error) {
+                        //     console.log('FAILED...', error);
+                        // });
+
+                        return rater;
+                    });
                     console.log("Entire session object: ", sessionObject);
-                    axios.post('http://localhost:3001/sessions',sessionObject)
+                    axios.put('http://localhost:3001/session',sessionObject)
+                });
+        } else {
+            fetch("/session").then(res => {
+                console.log("res is: ", res);
+                if(res.ok) { return res.json()}
+            })
+                .then(jsonRes => {
+                    console.log("JSON: ",jsonRes);
+                    sessionObject.id = jsonRes.length;
+                    sessionObject.raters = this.state.raters.map(rater => {
+                        let emailTemplate = {
+                            name: rater[0],
+                            email: rater[1],
+                            message: "Change these instructions later. Most likely, you should have some sort of web link here so that raters can follow that link to the rating app created just for them. Good luck, amigo!",
+                            date: date,
+                        }
+                        // emailjs.send('service_kc8f3pz','VBA_rater_invite', emailTemplate,'-ddp6NqroMoy1LpaE')
+                        // .then(function(response) {
+                        //     console.log('SUCCESS!', response.status, response.text);
+                        // }, function(error) {
+                        //     console.log('FAILED...', error);
+                        // });
+
+                        return rater;
+                    });
+                    console.log("Entire session object: ", sessionObject);
+                    axios.post('http://localhost:3001/session',sessionObject)
                 });
     
             this.setState({invitationsSent:true, seeEmails: false});
         }
-
-        // const sessionObject = {
-        //     color: "danger",
-        //     completed: false,
-        //     players: this.state.players,
-        //     raters: this.state.rater.map(rater => {
-        //         let emailTemplate = {
-        //             name: rater[0],
-        //             email: rater[1],
-        //             message: "Updated Session Text",
-        //             date: date,}
-                
-        //         // emailjs.send('service_kc8f3pz','VBA_rater_invite', emailTemplate,'-ddp6NqroMoy1LpaE')
-        //         // .then(function(response) {
-        //         //     console.log('SUCCESS!', response.status, response.text);
-        //         // }, function(error) {
-        //         //     console.log('FAILED...', error);
-        //         // });
-
-        //         return rater}),
-        // }
-        // **************************** SESSION ALREADY EXISTS
-        // if (this.props.replaceSession) {
-        //     console.log("Using replaced session", this.props.replaceSession);
-
-        //     const sessionObject = {
-        //         id: this.props.replaceSession,
-        //         date: date,
-        //         color: "danger",
-        //         completed: false,
-        //         players: this.state.players,
-        //         raters: this.state.raters.map(rater => {
-        //             let emailTemplate = {
-        //                 name: rater[0],
-        //                 email: rater[1],
-        //                 message: "Change these instructions later. Most likely, you should have some sort of web link here so that raters can follow that link to the rating app created just for them. Good luck, amigo!",
-        //                 date: date,
-        //         }
-        //             // emailjs.send('service_kc8f3pz','VBA_rater_invite', emailTemplate,'-ddp6NqroMoy1LpaE')
-        //             // .then(function(response) {
-        //             //     console.log('SUCCESS!', response.status, response.text);
-        //             // }, function(error) {
-        //             //     console.log('FAILED...', error);
-        //             // });
-
-        //             return rater;
-        //         }),
-        //     }
-
-        //     axios.post(`http://localhost:3001/sessions`,sessionObject);
-
-        //     return;
-        // }
     }
 
     toggleEmails() {
@@ -130,6 +100,7 @@ class InviteRaters extends Component {
     }
 
     render () {
+        console.log("Invite Raters: ", this.state);
         const {raters, players} = this.state;
 
         const playersList = players.map(player => {

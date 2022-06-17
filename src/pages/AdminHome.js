@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {Button} from 'reactstrap';
+import CurrentSession from './CurrentSession';
 
 class AdminHome extends Component {
     constructor(props) {
@@ -19,6 +20,9 @@ class AdminHome extends Component {
         const started = this.state.startedSession;
         const raters = this.state.raters;
         const players = this.state.players;
+        const loaded = this.props.loaded;
+
+        console.log("Admin home state: ", this.state);
 
         const alertAdmin = () => {
             if (!raters.length && !players.length) {
@@ -32,26 +36,23 @@ class AdminHome extends Component {
 
         return (
             <div>
-                {! started ?
+                {!started && !loaded?
                     <div>
+                        <CurrentSession session={this.props.session} loadSession={this.props.loadSession}/>
+
                         <div className='header'>
                             <h2>Want to start a new Ratings Session, bitch?</h2>
-                            <Button color="danger" size='lg' onClick={() => {
+                            <Button color="primary" size='lg' onClick={() => {
                                 this.props.start(); 
-                                this.setState({startedSession: true})}}
+                                this.setState({startedSession: true})
+                            }}
                             >Hell Yes 🔥</Button>
                         </div>
 
-                        <div className='header'>
-                            <h2>Want to modify or edit an existing Ratings Session, bitch?</h2>
-                            <Link to="/sessions"> <Button color="primary" size='lg'
-                                >Hell Yes 🔥</Button>
-                            </Link>
-                        </div>
                     </div> : null
                 }
 
-                { started ?  
+                { started || loaded ?  
                     <div>
                         <div>
                             {raters.length ? 

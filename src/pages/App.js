@@ -8,7 +8,7 @@ import RaterHome from './RaterHome';
 import AdminHome from './AdminHome';
 import Raters from './Raters';
 import InviteRaters from './InviteRaters';
-import Sessions from './Sessions';
+import CurrentSession from './CurrentSession';
 import logo from '../images/vbaLogo.png';
 import '../styles.css';
 import ReviewRatings from './ReviewRatings';
@@ -118,8 +118,9 @@ class App extends Component {
 				players: session.players,
 				raters: session.raters,
 				startedSession: true,
+				loadedSession: true,
 				session: session,
-			})
+			},() => console.log(this.state))
 		}
 
 		const updateRatings = (savedRatings,skill) => {
@@ -163,9 +164,11 @@ class App extends Component {
 					thisRater={this.state.thisRater} 
 					start={this.startSession} 
 					started={started} 
-					session={this.state.session}/>}/>
-				<Route path='/sessions' element={<Sessions 
+					loaded={this.state.loadedSession}
+					session={this.state.session}
 					loadSession={loadSession}/>}/>
+				{/* <Route path='/sessions' element={<CurrentSession 
+					loadSession={loadSession}/>}/> */}
 				<Route path='/raters' element={<Raters 
 					raters={raters} 
 					updateRaters={this.updateRaters}/>}/>

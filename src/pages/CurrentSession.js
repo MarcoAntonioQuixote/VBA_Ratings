@@ -2,34 +2,34 @@ import React, { Component } from 'react';
 import {Card, CardHeader, CardTitle, Button} from 'reactstrap';
 import {Link} from 'react-router-dom'
 
-class Sessions extends Component {
+class CurrentSession extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            sessions: [],
+            session: this.props.session[this.props.session.length-1],
         }
     }
 
     componentDidMount() {
-        fetch("/sessions").then(res => {
+        fetch("/session").then(res => {
             if(res.ok) { return res.json()} else {console.log(res.status,res.statusText)}
         })
             .then(jsonRes => {
-                console.log(jsonRes);
-                const sessions = jsonRes.map(session => {
+                const session = jsonRes.map(session => {
                     return session;
                 });
-                console.log(sessions);
                 this.setState({
-                    sessions: jsonRes,
+                    session: jsonRes[jsonRes.length-1],
                 })
             });
     }
 
     render() {
-        const sessions = this.state.sessions.map(session => {
-            return (    
+        const session = this.state.session;
+        let sessionDisplay;
+        if (session !== undefined) {
+            sessionDisplay = 
                 <Card key={session._id} className='card' body color={session.color} inverse >
                     <CardHeader>Session from: <h2>{session.date}</h2></CardHeader>
                     <CardTitle>
@@ -40,20 +40,18 @@ class Sessions extends Component {
                     <Link to="/">
                         <Button color="dark" onClick={() => this.props.loadSession(session)}> Select </Button>
                     </Link>
-                </Card>
-            )
-        })
+                </Card>            
+        }
 
         return (
             <div className='header'> 
-                { this.state.sessions.length === 0 ?
+                { session === undefined ?
                 <>
-                    <h2>You haven't conducted any sessions!</h2> 
-                    <Link to="/"><Button size="lg" color="danger">Go Back</Button></Link>
+                    <h2>You haven't conducted any prior sessions!</h2> 
                 </> :
                 <>
-                    <h2>Your previous sessions:</h2>
-                    {sessions}    
+                    <h2>Your Current Session:</h2>
+                    {sessionDisplay}    
                 </>
                 }
             </div>
@@ -61,4 +59,4 @@ class Sessions extends Component {
     }
 }
 
-export default Sessions;
+export default CurrentSession;

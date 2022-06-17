@@ -58,6 +58,10 @@
   padding-inline: 10%;
 }
 
+.card {
+  margin-block: 10%;
+}
+
 Input {
   margin-bottom: 1.5rem;
 }

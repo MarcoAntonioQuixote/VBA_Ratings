@@ -1,36 +1,105 @@
 import React, {Component} from 'react';
-import {Link, Routes, Route} from 'react-router-dom';
-import {Button} from 'reactstrap';
+import {Link} from 'react-router-dom';
+import {Button, Form, Input} from 'reactstrap';
+import axios from 'axios';
 
 class RaterHome extends Component {
     constructor(props) {
         super(props)
         
         this.state = {
-            players: props.players, //might have to fetch from a server
+            players: [],
+            raters: [],
+            // raterIdentified: false,
+            thisRater: this.props.thisRater,
+        }
+
+        this.verifyRater = this.verifyRater.bind(this);
+        this.syncSession = this.syncSession.bind(this);
+    }
+
+    verifyRater(event) {
+        event.preventDefault();
+        const email = event.target[0].value;
+        const lowercaseEmails = this.state.raters.map(rater => rater[1].toLowerCase());
+
+        if (lowercaseEmails.includes(email.toLowerCase())) {
+            let raterIndex = lowercaseEmails.indexOf(email.toLowerCase());
+            this.setState({
+                thisRater: this.state.raters[raterIndex],
+                raterIdentified: true,
+            });
+            this.props.update(this.state.players);
+            this.props.verify(this.state.raters[raterIndex]);
+        } else {
+            this.setState({
+                invalidRaterEmail: true
+            })
         }
     }
 
-    render() {
+    async syncSession() {
+        let res = await axios.get("/sessions");
+        let session = res.data[res.data.length-1]
 
+        this.setState({
+            raters: session.raters,
+            players: session.players,
+        },()=>console.log("state is: ", this.state))
+    }
+    
+    componentDidMount() {
+        this.syncSession();
+    }
+            
+    render() {
         const players = this.state.players;
+
+        const ConfirmRater = () => {
+            return (
+                <div className='header'>
+                    <Form onSubmit={(event) => this.verifyRater(event)}>
+                        <Input bsSize="lg" type="email" placeholder="Verify your email address"></Input>
+                        <Button type="submit" color="primary">Join Rating Session</Button>
+                    </Form>
+                </div>
+            )
+        }
+
+        const Invalid = () => {
+            return (
+                <div className='header'>
+                    {this.state.invalidRaterEmail ?
+                        <h4 style={{color: "cyan"}}>Enter a valid email address to rate at today's session.</h4> : null
+                    }
+                </div>
+            )
+        }
 
         return (
             <div>
+                {this.state.thisRater.length === 0 ?
+                    <div className='header'>
+                        <ConfirmRater/>
+                        <Invalid/>
+                    </div> : 
                 <div>
-                    {this.state.players.length ? <h2 className="header">Players: {this.state.players.length}</h2> : <h2 className="header">No Players Have Been Added Yet </h2>
+                
+                <div>
+                    <h2 className='header'>Welcome, {this.state.thisRater[0]}!</h2>
+                    {players.length ? <h2 className="header">Players: {players.length}</h2> : <h2 className="header">No Players Have Been Added Yet </h2>
                     }
                     
-                    <div className="container">
+                    {/* <div className="container">
                         <div className="row">
-                            <Link className="col" to="/addPlayer">
+                            <Link className="col" to="/raterAddPlayers">
                                 <Button color="info" size="lg">➕ Player</Button> 
                             </Link>
-                            <Link className="col" to="/subPlayer">
+                            <Link className="col" to="/raterSubPlayers">
                                 <Button color="warning" size="lg">➖ Player</Button>
                             </Link>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 <div className='header'>
                     <h2>Ready to start rating?</h2>
@@ -44,6 +113,8 @@ class RaterHome extends Component {
                         <Button color="success" size='lg'>Review 🏐</Button>
                     </Link>
                 </div>
+
+                </div>}
             </div>
         )
     }

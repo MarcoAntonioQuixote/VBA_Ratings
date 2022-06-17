@@ -10,6 +10,7 @@ class AdminHome extends Component {
             players: props.players,
             raters: props.raters,
             startedSession: props.started,
+            session: props.session,
         }
     }
 
@@ -31,14 +32,26 @@ class AdminHome extends Component {
 
         return (
             <div>
-                { !started ?  
-                    <div className='header'>
-                        <h2>Want to start a Ratings Session, bitch?</h2>
-                        <Button color="danger" size='lg' onClick={() => {
-                            this.props.start(); 
-                            this.setState({startedSession: true})}}
-                        >Hell Yes 🔥</Button>
-                    </div> :
+                {! started ?
+                    <div>
+                        <div className='header'>
+                            <h2>Want to start a new Ratings Session, bitch?</h2>
+                            <Button color="danger" size='lg' onClick={() => {
+                                this.props.start(); 
+                                this.setState({startedSession: true})}}
+                            >Hell Yes 🔥</Button>
+                        </div>
+
+                        <div className='header'>
+                            <h2>Want to modify or edit an existing Ratings Session, bitch?</h2>
+                            <Link to="/sessions"> <Button color="primary" size='lg'
+                                >Hell Yes 🔥</Button>
+                            </Link>
+                        </div>
+                    </div> : null
+                }
+
+                { started ?  
                     <div>
                         <div>
                             {raters.length ? 
@@ -76,8 +89,14 @@ class AdminHome extends Component {
                             }
 
                         </div>
+                        <div className='container'>
+                            <Button color="danger" size="lg" onClick={()=> {
+                                this.props.start(true);
+                                this.setState({startedSession: false,})
+                            }}>Change Session</Button>
+                        </div>
 
-                    </div>
+                    </div> : null
                 }
             </div>
         )

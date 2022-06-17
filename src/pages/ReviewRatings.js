@@ -115,7 +115,7 @@ class ReviewRatings extends Component {
     }
 
     confirmRatingsSubmit() {
-        console.log(this.state);
+        console.log("Review Ratings: ", this.state);
     }
 
     componentDidMount() {

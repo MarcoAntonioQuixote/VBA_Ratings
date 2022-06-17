@@ -29,6 +29,11 @@ class Players extends Component {
                 fromHome: true,
             })
         }
+        if (this.props.fromRaterHome) {
+            this.setState({
+                fromRaterHome: true,
+            })
+        }
     }
 
     render () {
@@ -95,7 +100,7 @@ class Players extends Component {
                             }
                             {
                                 !this.state.playerList && !this.state.fromHome ? 
-                                <div className="col col-5"><Link to="/">
+                                <div className="col col-5"><Link to="/">  
                                     <Button color="danger" size='lg' onClick={() => this.props.update(players)}>Go Back ↩️</Button></Link>
                                 </div> : null
                             }
@@ -105,6 +110,6 @@ class Players extends Component {
             </div>
         )
     }
-}
+} //Is link to raterHome accurate?
 
 export default Players;

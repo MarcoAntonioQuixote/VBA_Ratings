@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import {Routes, Route} from 'react-router-dom';
 import Header from './Header';
 import Players from "./Players";
@@ -7,6 +8,7 @@ import RaterHome from './RaterHome';
 import AdminHome from './AdminHome';
 import Raters from './Raters';
 import InviteRaters from './InviteRaters';
+import Sessions from './Sessions';
 import logo from '../images/vbaLogo.png';
 import '../styles.css';
 import ReviewRatings from './ReviewRatings';
@@ -33,8 +35,10 @@ class App extends Component {
 				["Chris","mr.markgutierrez@gmail.com"],
 				["Michael","pakawe4448@musezoo.com"],
 			],
-			startedSession: true, //should be false
-			oddsEvens: "All" //*** changes in Rater Mode
+			startedSession: false, //should be false
+			oddsEvens: "All", //*** changes in Rater Mode
+			thisRater: [],
+			session: [],
 		}
 
 		this.orderPlayers = this.orderPlayers.bind(this);
@@ -57,7 +61,7 @@ class App extends Component {
 		
 		this.setState({
 			players: players,
-		},() => console.log("The state of the main app: ", this.state));
+		},() => ("The state of the main app: ", this.state));
 	}
 
 	updateRaters = (adding,rater) => {
@@ -73,10 +77,16 @@ class App extends Component {
 		}
 	}
 
-	startSession = () => {
-		this.setState({
-			startedSession: true
-		})
+	startSession = (restart) => {
+		if (restart) {
+			this.setState({
+				startedSession: false
+			})
+		} else {
+			this.setState({
+				startedSession: true
+			})
+		}
 	}
 
 	componentDidMount() {
@@ -88,11 +98,28 @@ class App extends Component {
 		const players = this.state.players;
 		const raters = this.state.raters;
 		const started = this.state.startedSession;
+		const thisRater = this.state.thisRater;
 
 		const updatePlayers = (players) => {
 			this.setState({
 				players: players,
 			},()=>this.orderPlayers());
+		}
+
+		const verifyRater = (rater) => {
+			this.setState({
+				thisRater: rater,
+			},()=>console.log(" from main ", this.state));
+		}
+
+		const loadSession = (session) => {
+			console.log("loaded session: ", session);
+			this.setState({
+				players: session.players,
+				raters: session.raters,
+				startedSession: true,
+				session: session,
+			})
 		}
 
 		const updateRatings = (savedRatings,skill) => {
@@ -128,19 +155,45 @@ class App extends Component {
 
 	return (
 		<div className='App'>
-			<Header logo={logo} started={started}/>
+			<Header logo={logo} started={started} sessionDate={this.state.session.date}/>
 			<Routes>
-				<Route path='/' element={<AdminHome players={players} raters={raters} start={this.startSession} started={started}/>}/>
-				<Route path='/raters' element={<Raters raters={raters} updateRaters={this.updateRaters}/>}/>
-				<Route path='/inviteRaters' element ={<InviteRaters players={players} raters={raters}/>}/>
-				<Route path='/raterHome/*' element={<RaterHome players={players}/>}/>
-				
-				<Route path='addPlayer' element={<Players players={players} update={updatePlayers}/>} />
-				<Route path='subPlayer' element={<Players players={players} update={updatePlayers} fromHome={true}/>} />
-				<Route path='rate' element={<Rate players={players} update={updatePlayers} updateRatings={updateRatings} />} />
-				<Route path='review' element={<ReviewRatings players={this.state.players} updatePlayers={updatePlayers}/>} />
-				<Route path='submit' element={<SubmitRatings players={this.state.players} />} />
-				
+				<Route path='/' element={<AdminHome 
+					players={players} 
+					raters={raters} 
+					thisRater={this.state.thisRater} 
+					start={this.startSession} 
+					started={started} 
+					session={this.state.session}/>}/>
+				<Route path='/sessions' element={<Sessions 
+					loadSession={loadSession}/>}/>
+				<Route path='/raters' element={<Raters 
+					raters={raters} 
+					updateRaters={this.updateRaters}/>}/>
+				<Route path='/inviteRaters' element ={<InviteRaters 
+					players={players} 
+					raters={raters} 
+					session={this.state.session}/>}/>
+				<Route path='/raterHome' element={<RaterHome 
+					players={players} 
+					update={updatePlayers} 
+					verify={verifyRater} 
+					thisRater={thisRater}/>}/>
+				<Route path='addPlayer' element={<Players 
+					players={players} 
+					update={updatePlayers}/>} />
+				<Route path='subPlayer' element={<Players 
+					players={players} 
+					update={updatePlayers} 
+					fromHome={true}/>} />
+				<Route path='rate' element={<Rate 
+					players={players} 
+					update={updatePlayers} 
+					updateRatings={updateRatings} />} />
+				<Route path='review' element={<ReviewRatings 
+					players={this.state.players} 
+					updatePlayers={updatePlayers}/>} />
+				<Route path='submit' element={<SubmitRatings 
+					players={this.state.players} />} />
 			</Routes>
 		</div>
 		)
@@ -160,8 +213,17 @@ On Review page: It says please finish rating even though it was finished (all en
 
 //The function for raters to add players *after* the fact might be super tricky
 
+*Verify email address did not work well.
+
 //When Rate is finished, and heads to review it should send Odds/Evens so that the display is automatically odds or evens
 
+** Edit in review mode allows above 10; fix for constraints
+
 ** on the update page, saving while blank will remove the player's score. 
+
+//review ratings is where you want it displayed that a new player has been added (so you would need to get!!)
+
+AXIOS - make HTTP requests from react app
+Min 20
 
 */

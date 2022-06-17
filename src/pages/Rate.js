@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Button, ButtonDropdown, DropdownToggle, DropdownItem, DropdownMenu, Form, Modal, ModalHeader, ModalBody, Input, FormGroup, ButtonGroup} from 'reactstrap';
 import {Link} from 'react-router-dom';
 import ListPlayers from './ListPlayers';
+import axios from 'axios';
 
 class Rate extends Component {
     constructor(props) {
@@ -30,7 +31,6 @@ class Rate extends Component {
     }
 
     toggle(toggle, skill) {
-        console.log(toggle,skill,this.state.stayInSkill);
         if (this.state.dataToSave === false) {
             if (toggle) {
                 this.setState({
@@ -57,14 +57,13 @@ class Rate extends Component {
                 }
                 this.setState({
                     skill: skill,
-                }, () => console.log("state after selection: ", this.state));
+                });
             }
         } else {
             if (this.state.stayInSkill !== false) {
                 this.setState({
                     saveModalOpen: true, //ask the question
                 })
-                console.log("opening here?");
             } else if (toggle) {
                 this.setState({
                     dropdownOpen: !this.state.dropdownOpen,
@@ -94,7 +93,7 @@ class Rate extends Component {
                     dropdownOpen: false,
                     stayInSkill: null,
                     dataToSave: false,
-                }, () => console.log("state after selection: ", this.state));
+                });
             }
         }
     }
@@ -152,7 +151,7 @@ class Rate extends Component {
         saveRatingsInMain(saveToMain,this.state.skill);
     }
 
-    submitRatings(updateRatings) {
+    submitRatings(updateRatings,saveToServer) {
         let organizingData = [];
         const players = this.state.players;
         let serving = this.state.scoresInServing;
@@ -186,7 +185,11 @@ class Rate extends Component {
         this.setState({
             finalPlayerResults: organizingData,
         });
-        updateRatings(null,null,organizingData); //function passed from main app
+        console.log("Org data: ", organizingData); 
+        if (saveToServer) {
+            axios.put(`updateSession/${'62ab9cdb349ce513d3857696'}`,organizingData)
+                .then(res => console.log("res in saving: ", res.data))
+        } else updateRatings(null,null,organizingData); //function passed from main app
     }
 
     reUpdateRatings(updatedRatings) {
@@ -333,8 +336,8 @@ class Rate extends Component {
                     <Button style={{marginRight: "30px"}}color='danger' onClick={()=> {this.setState({
                         stayInSkill: false, 
                         saveModalOpen: false, 
-                        dropdownOpen: true}, 
-                        ()=>console.log(this.state))}}>
+                        dropdownOpen: true}
+                        )}}>
                     Yes</Button>
                     <Button color='success' onClick={()=> {this.setState({
                         stayInSkill: true, 
@@ -351,9 +354,12 @@ class Rate extends Component {
                 {oddsEvens} 
                 { this.state.oddsEvens == "All" ?
                     <h2>Enter your ratings for All {playerNum} Players on {skills} : </h2> :
-                    <h2>Enter your ratings for the {playerNum} {this.state.oddsEvens} Players on {skills} :</h2> 
+                    <h2>Enter your ratings for the {playerNum} {this.state.oddsEvens} Players on {skills}:</h2> 
                 }
-                <Form id='ratingsForm' onSubmit={(event) => this.saveRatings(event,this.props.updateRatings)}>
+                <Form id='ratingsForm' onSubmit={(event) => {
+                    this.saveRatings(event,this.props.updateRatings);
+                    this.submitRatings(null,true);
+                    }}>
                     <ListPlayers 
                         players={players} 
                         onChange={this.ratingsInputted}

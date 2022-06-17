@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 
 const date = new Date().toDateString("en-us");
 
-const Header = ({logo,started}) => {
+const Header = ({logo,started,sessionDate}) => {
 	return (			
 		<div className="App-header">
 			<Link to="/">
@@ -11,7 +11,7 @@ const Header = ({logo,started}) => {
 			</Link>
 			<p>🏐 Ratings Session 🔟</p>
 			{ started ?
-				<p style={{fontSize: "20px"}}>For session on {date}</p>	: null	
+				<p style={{fontSize: "20px"}}>For session on {sessionDate || date}</p>	: null	
 			}
 		</div>
 	)

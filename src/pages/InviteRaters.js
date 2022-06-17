@@ -2,18 +2,20 @@ import React, {Component} from 'react';
 import {Button} from 'reactstrap';
 import {Link} from 'react-router-dom';
 import emailjs from 'emailjs-com';
+import axios from 'axios';
 
 const date = new Date().toDateString("en-us");
 
 class InviteRaters extends Component {
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
             invitationsSent: false,
             seeEmails: false,
             raters: this.props.raters,
             players: this.props.players,
+            session: this.props.session,
         }
 
         this.sendInvites = this.sendInvites.bind(this);
@@ -21,26 +23,105 @@ class InviteRaters extends Component {
     }
 
     sendInvites = () => {
-        
-        this.state.raters.map(rater => {
-            let emailTemplate = {
-                name: rater[0],
-                email: rater[1],
-                message: "Change these instructions later. Most likely, you should have some sort of web link here so that raters can follow that link to the rating app created just for them. Good luck, amigo!",
-                date: date,
-            }
+        const session = this.state.session;
+        console.log(session.id);
 
-            // emailjs.send('service_kc8f3pz','VBA_rater_invite', emailTemplate,'-ddp6NqroMoy1LpaE')
-            //     .then(function(response) {
-            //         console.log('SUCCESS!', response.status, response.text);
-            //     }, function(error) {
-            //         console.log('FAILED...', error);
-            //     });
-        });
+        if (session.id) {
+            console.log("You have a loaded session!")
+        } else {
+            fetch("/sessions").then(res => {
+                console.log("res is: ", res);
+                if(res.ok) { return res.json()}
+            })
+                .then(jsonRes => {
+                    console.log("JSON: ",jsonRes);
+                //     return jsonRes;
+                // })
+                // .then(jsonRes => {
+                    const sessionObject = {//dont forget to change the schema under model and under routes!! (Also had to reset the server)
+                        id: jsonRes.length,
+                        date: date,
+                        color: "danger",
+                        completed: false,
+                        players: this.state.players,
+                        raters: this.state.raters.map(rater => {
+                            let emailTemplate = {
+                                name: rater[0],
+                                email: rater[1],
+                                message: "Change these instructions later. Most likely, you should have some sort of web link here so that raters can follow that link to the rating app created just for them. Good luck, amigo!",
+                                date: date,
+                        }
+                            // emailjs.send('service_kc8f3pz','VBA_rater_invite', emailTemplate,'-ddp6NqroMoy1LpaE')
+                            // .then(function(response) {
+                            //     console.log('SUCCESS!', response.status, response.text);
+                            // }, function(error) {
+                            //     console.log('FAILED...', error);
+                            // });
+    
+                            return rater;
+                        }),
+    
+                    }
+                    console.log("Entire session object: ", sessionObject);
+                    axios.post('http://localhost:3001/sessions',sessionObject)
+                });
+    
+            this.setState({invitationsSent:true, seeEmails: false});
+        }
 
-        this.setState({invitationsSent:true, seeEmails: false});
+        // const sessionObject = {
+        //     color: "danger",
+        //     completed: false,
+        //     players: this.state.players,
+        //     raters: this.state.rater.map(rater => {
+        //         let emailTemplate = {
+        //             name: rater[0],
+        //             email: rater[1],
+        //             message: "Updated Session Text",
+        //             date: date,}
+                
+        //         // emailjs.send('service_kc8f3pz','VBA_rater_invite', emailTemplate,'-ddp6NqroMoy1LpaE')
+        //         // .then(function(response) {
+        //         //     console.log('SUCCESS!', response.status, response.text);
+        //         // }, function(error) {
+        //         //     console.log('FAILED...', error);
+        //         // });
 
-    };
+        //         return rater}),
+        // }
+        // **************************** SESSION ALREADY EXISTS
+        // if (this.props.replaceSession) {
+        //     console.log("Using replaced session", this.props.replaceSession);
+
+        //     const sessionObject = {
+        //         id: this.props.replaceSession,
+        //         date: date,
+        //         color: "danger",
+        //         completed: false,
+        //         players: this.state.players,
+        //         raters: this.state.raters.map(rater => {
+        //             let emailTemplate = {
+        //                 name: rater[0],
+        //                 email: rater[1],
+        //                 message: "Change these instructions later. Most likely, you should have some sort of web link here so that raters can follow that link to the rating app created just for them. Good luck, amigo!",
+        //                 date: date,
+        //         }
+        //             // emailjs.send('service_kc8f3pz','VBA_rater_invite', emailTemplate,'-ddp6NqroMoy1LpaE')
+        //             // .then(function(response) {
+        //             //     console.log('SUCCESS!', response.status, response.text);
+        //             // }, function(error) {
+        //             //     console.log('FAILED...', error);
+        //             // });
+
+        //             return rater;
+        //         }),
+        //     }
+
+        //     axios.post(`http://localhost:3001/sessions`,sessionObject);
+
+        //     return;
+        // }
+    }
 
     toggleEmails() {
         this.setState({
@@ -70,7 +151,7 @@ class InviteRaters extends Component {
         return (
             <div>
                 {!this.state.invitationsSent? 
-                    <h2 className="header" style={{paddingInline: "20%"}}>Review the Raters and Players in your Ratings Session</h2> : 
+                    <h5 className="header" >Review the Raters and Players in your Ratings Session</h5> : 
                     <div className='header'>
                         <h1>An email has been sent to the following raters: </h1>
                         {this.state.seeEmails ? 

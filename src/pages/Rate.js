@@ -185,10 +185,12 @@ class Rate extends Component {
         this.setState({
             finalPlayerResults: organizingData,
         });
-        console.log("Org data: ", organizingData); 
-        if (saveToServer) {
-            axios.put(`updateSession/${'62ab9cdb349ce513d3857696'}`,organizingData)
+        console.log("Org data for: ",this.props.session, organizingData); 
+        if (saveToServer && this.props.session._id !== undefined) {
+            axios.put(`session/${this.props.session._id}`,[this.props.thisRater,organizingData])
                 .then(res => console.log("res in saving: ", res.data))
+        } else if (saveToServer) {
+            console.log("You have this saved in session: ", this.props.session);
         } else updateRatings(null,null,organizingData); //function passed from main app
     }
 

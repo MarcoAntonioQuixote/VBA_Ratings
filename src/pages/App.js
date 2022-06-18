@@ -32,7 +32,7 @@ class App extends Component {
 			],
 			raters: [
 				["Samuel","strive2thrivetutoring@gmail.com"],
-				["Chris","mr.markgutierrez@gmail.com"],
+				["Markus","mr.markgutierrez@gmail.com"],
 				["Michael","pakawe4448@musezoo.com"],
 			],
 			startedSession: false, //should be false
@@ -99,6 +99,7 @@ class App extends Component {
 		const raters = this.state.raters;
 		const started = this.state.startedSession;
 		const thisRater = this.state.thisRater;
+		const session = this.state.session;
 
 		const updatePlayers = (players) => {
 			this.setState({
@@ -156,7 +157,7 @@ class App extends Component {
 
 	return (
 		<div className='App'>
-			<Header logo={logo} started={started} sessionDate={this.state.session.date}/>
+			<Header logo={logo} started={started} sessionDate={session.date}/>
 			<Routes>
 				<Route path='/' element={<AdminHome 
 					players={players} 
@@ -165,21 +166,20 @@ class App extends Component {
 					start={this.startSession} 
 					started={started} 
 					loaded={this.state.loadedSession}
-					session={this.state.session}
+					session={session}
 					loadSession={loadSession}/>}/>
-				{/* <Route path='/sessions' element={<CurrentSession 
-					loadSession={loadSession}/>}/> */}
 				<Route path='/raters' element={<Raters 
 					raters={raters} 
 					updateRaters={this.updateRaters}/>}/>
 				<Route path='/inviteRaters' element ={<InviteRaters 
 					players={players} 
 					raters={raters} 
-					session={this.state.session}/>}/>
+					session={session}/>}/>
 				<Route path='/raterHome' element={<RaterHome 
 					players={players} 
 					update={updatePlayers} 
-					verify={verifyRater} 
+					verify={verifyRater}
+					loadSession={loadSession}
 					thisRater={thisRater}/>}/>
 				<Route path='addPlayer' element={<Players 
 					players={players} 
@@ -191,7 +191,9 @@ class App extends Component {
 				<Route path='rate' element={<Rate 
 					players={players} 
 					update={updatePlayers} 
-					updateRatings={updateRatings} />} />
+					updateRatings={updateRatings}
+					session={session}
+					thisRater={thisRater} />} />
 				<Route path='review' element={<ReviewRatings 
 					players={this.state.players} 
 					updatePlayers={updatePlayers}/>} />

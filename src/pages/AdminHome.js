@@ -12,7 +12,18 @@ class AdminHome extends Component {
             raters: props.raters,
             startedSession: props.started,
             session: props.session,
+            loaded: props.loaded,
         }
+
+        this.loadSession = this.loadSession.bind(this);
+    }
+
+    loadSession(session) {
+        this.props.loadSession(session);
+        this.setState({
+            session: session,
+            loaded: true,
+        })
     }
 
     render() {
@@ -20,9 +31,8 @@ class AdminHome extends Component {
         const started = this.state.startedSession;
         const raters = this.state.raters;
         const players = this.state.players;
-        const loaded = this.props.loaded;
-
-        console.log("Admin home state: ", this.state);
+        const loaded = this.state.loaded;
+        const session = this.state.session;
 
         const alertAdmin = () => {
             if (!raters.length && !players.length) {
@@ -38,7 +48,7 @@ class AdminHome extends Component {
             <div>
                 {!started && !loaded?
                     <div>
-                        <CurrentSession session={this.props.session} loadSession={this.props.loadSession}/>
+                        <CurrentSession session={this.props.session} loadSession={this.loadSession}/>
 
                         <div className='header'>
                             <h2>Want to start a new Ratings Session, bitch?</h2>
@@ -91,10 +101,14 @@ class AdminHome extends Component {
 
                         </div>
                         <div className='container'>
-                            <Button color="danger" size="lg" onClick={()=> {
-                                this.props.start(true);
-                                this.setState({startedSession: false,})
-                            }}>Change Session</Button>
+                            {session.length === 0 ?
+                                null : 
+                                <Button color="danger" size="lg" onClick={()=> {
+                                    this.props.start(true);
+                                    this.setState({startedSession: false, loaded: false})
+                                }}>👈🏾 Go Back </Button>
+
+                            }
                         </div>
 
                     </div> : null

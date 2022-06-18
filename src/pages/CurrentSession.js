@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {Card, CardHeader, CardTitle, Button} from 'reactstrap';
 import {Link} from 'react-router-dom'
+import axios from 'axios';
 
 class CurrentSession extends Component {
     constructor(props) {
@@ -9,20 +10,21 @@ class CurrentSession extends Component {
         this.state = {
             session: this.props.session[this.props.session.length-1],
         }
+
+        this.checkForSession = this.checkForSession.bind(this);
+    }
+
+    async checkForSession() {
+        let res = await axios.get("/session");
+        let session = res.data[res.data.length-1];
+
+        this.setState({
+            session: session,
+        })
     }
 
     componentDidMount() {
-        fetch("/session").then(res => {
-            if(res.ok) { return res.json()} else {console.log(res.status,res.statusText)}
-        })
-            .then(jsonRes => {
-                const session = jsonRes.map(session => {
-                    return session;
-                });
-                this.setState({
-                    session: jsonRes[jsonRes.length-1],
-                })
-            });
+        this.checkForSession();
     }
 
     render() {
@@ -31,7 +33,7 @@ class CurrentSession extends Component {
         if (session !== undefined) {
             sessionDisplay = 
                 <Card key={session._id} className='card' body color={session.color} inverse >
-                    <CardHeader>Session from: <h2>{session.date}</h2></CardHeader>
+                    <CardHeader>Session {session.id} from: <h2>{session.date}</h2></CardHeader>
                     <CardTitle>
                         Num of Raters: {session.raters.length} <br/>
 

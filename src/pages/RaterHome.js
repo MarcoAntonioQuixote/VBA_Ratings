@@ -20,6 +20,7 @@ class RaterHome extends Component {
 
     verifyRater(event) {
         event.preventDefault();
+        console.log("event: ", event);
         const email = event.target[0].value;
         const lowercaseEmails = this.state.raters.map(rater => rater[1].toLowerCase());
 
@@ -29,6 +30,7 @@ class RaterHome extends Component {
                 thisRater: this.state.raters[raterIndex],
                 raterIdentified: true,
             });
+            console.log("true, verified");
             this.props.update(this.state.players);
             this.props.verify(this.state.raters[raterIndex]);
         } else {
@@ -39,13 +41,15 @@ class RaterHome extends Component {
     }
 
     async syncSession() {
-        let res = await axios.get("/sessions");
-        let session = res.data[res.data.length-1]
+        let res = await axios.get("/session");
+        let session = res.data[res.data.length-1];
+
+        this.props.loadSession(session);
 
         this.setState({
             raters: session.raters,
             players: session.players,
-        },()=>console.log("state is: ", this.state))
+        })
     }
     
     componentDidMount() {
@@ -90,16 +94,6 @@ class RaterHome extends Component {
                     {players.length ? <h2 className="header">Players: {players.length}</h2> : <h2 className="header">No Players Have Been Added Yet </h2>
                     }
                     
-                    {/* <div className="container">
-                        <div className="row">
-                            <Link className="col" to="/raterAddPlayers">
-                                <Button color="info" size="lg">➕ Player</Button> 
-                            </Link>
-                            <Link className="col" to="/raterSubPlayers">
-                                <Button color="warning" size="lg">➖ Player</Button>
-                            </Link>
-                        </div>
-                    </div> */}
                 </div>
                 <div className='header'>
                     <h2>Ready to start rating?</h2>

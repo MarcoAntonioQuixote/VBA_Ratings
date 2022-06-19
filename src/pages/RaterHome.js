@@ -9,9 +9,12 @@ class RaterHome extends Component {
         super(props)
         
         this.state = {
-            players: [],
-            raters: [],
+            // players: [],
+            // raters: [], OBJECT CHECK -- TEST IF EMPTY.
             // raterIdentified: false,
+
+            players: this.props.players,
+            raters: this.props.raters,
             thisRater: this.props.thisRater,
         }
 
@@ -22,11 +25,7 @@ class RaterHome extends Component {
     verifyRater(event) {
         event.preventDefault();
         const email = event.target[0].value;
-        const lowercaseEmails = this.state.raters.map(rater => {
-            if (rater.email) {
-                return rater.email.toLowerCase();
-            } else { return rater[1].toLowerCase(); }
-        });
+        const lowercaseEmails = this.state.raters.map(rater => rater.email.toLowerCase());
 
         if (lowercaseEmails.includes(email.toLowerCase())) {
             let raterIndex = lowercaseEmails.indexOf(email.toLowerCase());
@@ -62,6 +61,7 @@ class RaterHome extends Component {
     
     componentDidMount() {
         this.syncSession();
+        console.log("Hi players: ", this.state.players);
     }
             
     render() {
@@ -103,7 +103,7 @@ class RaterHome extends Component {
                         <div>
                         
                         <div>
-                            <h2 className='header'>Welcome, {thisRater[0]}!</h2>
+                            <h2 className='header'>Welcome, {thisRater.name}!</h2>
                             {players.length ? <h2 className="header">Players: {players.length}</h2> : <h2 className="header">No Players Have Been Added Yet </h2>
                             }
                             

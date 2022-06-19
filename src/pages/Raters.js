@@ -20,11 +20,16 @@ class Raters extends Component {
         const addRater = (e) => {
             const raterName = e.target[0].value;
             const raterEmail = e.target[1].value;
-            const newRater = [raterName,raterEmail];
+            const newRater = {
+                name: raterName,
+                email: raterEmail,
+                finished: false,
+                ratings: [],
+                oddsEvens: "All"
+            }
 
             e.preventDefault();
             e.target.reset();
-            const lowercaseRaters = this.state.raters.map(rater => rater[0].toLowerCase());
             const lowercaseEmails = this.state.raters.map(rater => rater[1].toLowerCase());
 
             if (raterName === "") {
@@ -33,8 +38,8 @@ class Raters extends Component {
             } else if (raterEmail === "") {
                 alert("Gotta send that invite somewhere. Please add an email for the rater.📨");
                 return;
-            } else if (lowercaseRaters.includes(raterName.toLowerCase()) || lowercaseEmails.includes(raterEmail.toLowerCase())) {
-                alert("You have already entered a rater with those credentials.");
+            } else if (lowercaseEmails.includes(raterEmail.toLowerCase())) {
+                alert("You have already entered a rater with that email address.❌");
                 return;
             }
             this.setState({
@@ -45,13 +50,21 @@ class Raters extends Component {
             this.props.updateRaters(true,newRater);
         }
 
-        const deleteRater = (deletingRater) => {
-            const raters = this.state.raters.filter(thisRater => thisRater[0] !== deletingRater[0]);
+        const deleteRater = (deletingRater) => { //OBJECT CHECK
+            const raters = this.state.raters.filter(thisRater => thisRater.name !== deletingRater.name);
             this.setState({
 				raters: raters,
 			})
             this.props.updateRaters(false, deletingRater);
         }
+
+        // const deleteRater = (deletingRater) => { //OBJECT CHECK OLD
+        //     const raters = this.state.raters.filter(thisRater => thisRater[0] !== deletingRater[0]);
+        //     this.setState({
+		// 		raters: raters,
+		// 	})
+        //     this.props.updateRaters(false, deletingRater);
+        // }
 
         return (
             <div>
@@ -74,9 +87,9 @@ class Raters extends Component {
                 <div className="header">
                     { raters.map((rater) => {
                         return (
-                            <div className="row" key={rater[0]}>
+                            <div className="row" key={rater.email}>
                                 <div className="col">
-                                    <h4>{rater[0]}</h4>
+                                    <h4>{rater.name}</h4>
                                 </div>
                                 <div className="col" onClick={() => deleteRater(rater)}> 🗑️ </div>
                             </div>

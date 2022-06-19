@@ -2,11 +2,11 @@ import React from 'react';
 import {Button,Modal, ModalHeader,ModalBody} from 'reactstrap';
 import {Link} from 'react-router-dom';
 
-function SubmitRatings({toggle,modalOpen,rater,oddsEvens,finalDisplay,raterSubmission}) {
+function SubmitRatings({toggle,modalOpen,rater,finalDisplay,raterSubmission}) {
     return (
         <Modal isOpen={modalOpen}>
             <ModalHeader>
-                {rater[0]}, check out your ratings. <br/><br/>
+                {rater.name}, check out your ratings. <br/><br/>
 
                 Do you wish to submit these ratings? 
             </ModalHeader>
@@ -20,7 +20,7 @@ function SubmitRatings({toggle,modalOpen,rater,oddsEvens,finalDisplay,raterSubmi
                         </div>
                         <div className="col">
                             <Link to="/raterFinished">
-                                <Button color="success" onClick={()=> raterSubmission(rater,oddsEvens)}>Submit</Button>
+                                <Button color="success" onClick={()=> raterSubmission(rater)}>Submit</Button>
                             </Link>
                         </div>
                     </div>

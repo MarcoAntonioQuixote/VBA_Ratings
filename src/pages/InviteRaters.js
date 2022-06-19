@@ -28,17 +28,17 @@ class InviteRaters extends Component {
 
         this.state.raters.map(rater => {
             let emailTemplate = {
-                name: rater[0],
-                email: rater[1],
+                name: rater.name,
+                email: rater.email,
                 message: "Change these instructions later. Most likely, you should have some sort of web link here so that raters can follow that link to the rating app created just for them. Good luck, amigo!",
                 date: date,
             }
-            emailjs.send('service_kc8f3pz','VBA_rater_invite', emailTemplate,'-ddp6NqroMoy1LpaE')
-            .then(function(response) {
-                console.log('SUCCESS!', response.status, response.text);
-            }, function(error) {
-                console.log('FAILED...', error);
-            });
+            // emailjs.send('service_kc8f3pz','VBA_rater_invite', emailTemplate,'-ddp6NqroMoy1LpaE')
+            // .then(function(response) {
+            //     console.log('SUCCESS!', response.status, response.text);
+            // }, function(error) {
+            //     console.log('FAILED...', error);
+            // });
         });
 
         if (session._id) {
@@ -89,12 +89,12 @@ class InviteRaters extends Component {
         });
         const ratersList = raters.map(rater => {
             return (
-                <h4 key={rater[0]}>{rater[0]}</h4>
+                <h4 key={rater.email}>{rater.name}</h4>
             )
         });
         const ratersEmails = raters.map(rater => {
             return (
-                <h5 key={rater[0]}>{rater[0]} — {rater[1]}</h5>
+                <h5 key={rater.email}>{rater.name} — {rater.email}</h5>
             )
         });
 

@@ -30,9 +30,27 @@ class App extends Component {
 				["312","","","","","",false,""],
 			],
 			raters: [
-				["Samuel","strive2thrivetutoring@gmail.com"],
-				["Markus","mr.markgutierrez@gmail.com"],
-				["Michael","pakawe4448@musezoo.com"],
+				{ 
+					name: "Samuel",
+					email: "strive2thrivetutoring@gmail.com",
+					oddsEvens: "All",
+					ratings: [],
+					finished: false,
+				},
+				{ 
+					name: "Markus",
+					email: "mr.markgutierrez@gmail.com",
+					oddsEvens: "All",
+					ratings: [],
+					finished: false,
+				},
+				{ 
+					name: "Michael",
+					email: "VBAprez@gmail.com",
+					oddsEvens: "All",
+					ratings: [],
+					finished: false,
+				}
 			],
 			startedSession: false, 
 			oddsEvens: "All",
@@ -69,9 +87,9 @@ class App extends Component {
 				raters: [...this.state.raters, rater],
 			})
 		} else {
-			const raters = this.state.raters.filter(thisRater => thisRater[0] !== rater[0]);
+			const raters = this.state.raters.filter(thisRater => thisRater.name !== rater.name);
 			this.setState({
-				raters: raters,
+				raters: raters, //OBJECT CHECK COPIED FROM RATERS PAGE
 			})
 		}
 	}
@@ -114,13 +132,14 @@ class App extends Component {
 		}
 
 		const loadSession = (session) => {
+			console.log("Loaded: ", session);
 			this.setState({
 				players: session.players,
 				raters: session.raters,
 				startedSession: true,
 				loadedSession: true,
 				session: session,
-			})
+			}, ()=> console.log("Main state: ", this.state));
 		}
 
 		const oddsEvensSelect = (selection) => {
@@ -173,12 +192,13 @@ class App extends Component {
 			});
 		}
 
-		const raterSubmission = (theRater,oddsEvens) => {
-			const finalizedRater = {
-				name: theRater[0],
-				email: theRater[1],
+		const raterSubmission = (theRater) => {
+			console.log("The finalized rater: ", theRater);
+			const finalizedRater = { //OBJECT CHECK LAST!!
+				name: theRater.name,
+				email: theRater.email,
 				ratings: theRater[2],
-				oddsEvens: oddsEvens,
+				oddsEvens: theRater.oddsEvens,
 				finished: true
 			}
 			this.setState({

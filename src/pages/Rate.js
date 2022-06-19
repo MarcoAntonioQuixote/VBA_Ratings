@@ -30,6 +30,8 @@ class Rate extends Component {
         this.raterNotes = this.raterNotes.bind(this);
         this.saveNotes = this.saveNotes.bind(this);
         this.onRadioBtnClick = this.onRadioBtnClick.bind(this);
+
+        console.log("Hi players: ", this.state.players);
     }
 
     toggle(toggle, skill) {
@@ -101,9 +103,6 @@ class Rate extends Component {
     }
 
     ratingsInputted(event) {
-        // let value = event.target.value;
-        // if (value < 0) {alert("Enter a rating higher than 0️⃣ 😇")};
-        // if (value > 10) {alert("Enter a rating lower than 1️⃣0️⃣ 😈")};
         this.setState({dataToSave: true});
     }
 
@@ -123,6 +122,8 @@ class Rate extends Component {
                 }
             } else { submission.push(null); }
         }
+
+        console.log("submission: ", submission)
 
         for (let p = 0; p < players.length; p++) {
 
@@ -159,6 +160,7 @@ class Rate extends Component {
 
     submitRatings(updateRatings,saveToServer) {
         let organizingData = [];
+        let thisRater = this.state.thisRater;
         const players = this.state.players;
         let serving = this.state.scoresInServing;
         let passSet = this.state.scoresInPassSet;
@@ -192,8 +194,12 @@ class Rate extends Component {
             finalPlayerResults: organizingData,
         });
 
+        thisRater.ratings = organizingData;
+
+        //OBJECT CHECK
+
         if (saveToServer && this.props.session._id !== undefined) {
-            axios.put(`session/${this.props.session._id}/${this.state.thisRater[1]}`,organizingData)
+            axios.put(`session/${this.props.session._id}/${this.state.thisRater.email}`,thisRater);
 
         } else if (saveToServer) {
             console.log("You have this saved in session: ", this.props.session);
@@ -204,9 +210,9 @@ class Rate extends Component {
         const res = await axios.get("/session");
         const session = res.data[res.data.length-1];
         const thisRater = this.state.thisRater;
-        const lowercaseEmails = session.raters.map(rater => rater[1].toLowerCase());
-        let index = lowercaseEmails.indexOf(thisRater[1].toLowerCase());
-        const dataToSync = session.raters[index][2];
+        const lowercaseEmails = session.raters.map(rater => rater.email.toLowerCase());
+        let index = lowercaseEmails.indexOf(thisRater.email.toLowerCase());
+        const dataToSync = session.raters[index].ratings; //OBJECT CHECK***
         if (!dataToSync) {
             return Promise;
         }
@@ -227,16 +233,17 @@ class Rate extends Component {
             updateAttacking.push(updatedPlayerData[x][4]);
             updateBlocking.push(updatedPlayerData[x][5]);
         }
+        console.log("Check it out: ", updatedPlayerData);
         this.setState({
             scoresInServing: updateServing,
             scoresInPassSet: updatePassSet,
             scoresInDefense: updateDefense,
             scoresInAttacking: updateAttacking,
             scoresInBlocking: updateBlocking,
-            players: updatedPlayerData,
+            // players: updatedPlayerData, OBJECT CHECK
         })
 
-        this.props.update(updatedPlayerData);
+        // this.props.update(updatedPlayerData);
         return Promise;
     }
 
@@ -288,6 +295,7 @@ class Rate extends Component {
                 this.setState({
                     oddsEvens: "Odd",
                     playersToShow: oddsPlayers,
+                    thisRater: {... this.state.thisRater, oddsEvens: selected},
                 });
                 this.props.oddsEvensSelect("Odd");
                 break;
@@ -295,6 +303,7 @@ class Rate extends Component {
                 this.setState({
                     oddsEvens: "Even",
                     playersToShow: evensPlayers,
+                    thisRater: {... this.state.thisRater, oddsEvens: selected},
                 });
                 this.props.oddsEvensSelect("Even");
                 break;
@@ -302,6 +311,7 @@ class Rate extends Component {
                 this.setState({
                     oddsEvens: "All",
                     playersToShow: this.state.players,
+                    thisRater: {... this.state.thisRater, oddsEvens: selected},
                 });
                 this.props.oddsEvensSelect("All");
                 break;
@@ -309,7 +319,7 @@ class Rate extends Component {
       }
    
     async componentDidMount() {
-        await this.syncRatings();
+        await this.syncRatings(); 
         // this.reUpdateRatings(this.props.players);
         if (this.state.oddsEvens !== "All") {
             this.onRadioBtnClick(this.state.oddsEvens);
@@ -344,7 +354,7 @@ class Rate extends Component {
                 <Button color="light" onClick={() => this.onRadioBtnClick("Even")} active={this.state.oddsEvens === 2}>Evens</Button>
                 <Button color="dark" onClick={() => this.onRadioBtnClick("All")} active={this.state.oddsEvens === 3}>All</Button>
             </ButtonGroup>
-        const modal = 
+        const notesModal = 
             <Modal isOpen={this.state.modalOpen}>
                 <ModalHeader>Your notes on #{this.state.notesFor[0]}:</ModalHeader>
                 <ModalBody>
@@ -404,8 +414,7 @@ class Rate extends Component {
 
                 </Form>
 
-
-                {modal}
+                {notesModal}
                 {saveModal}
             </div>
         )

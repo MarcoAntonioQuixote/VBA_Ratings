@@ -62,6 +62,7 @@ class ReviewRatings extends Component {
         else {
             this.setState({
                 oddsEvens: oddsEvens,
+                thisRater: {...this.state.thisRater, oddsEvens: oddsEvens} //
             },()=> {
                 this.ratingsCompleteCheck();
                 this.props.oddsEvensSelect(oddsEvens);
@@ -295,7 +296,7 @@ class ReviewRatings extends Component {
                         toggle={this.RatingsSubmissionModal} 
                         modalOpen={this.state.showFinalRatingsModal} 
                         rater={this.state.thisRater}
-                        oddsEvens={this.state.oddsEvens} 
+                        // oddsEvens={this.state.oddsEvens} 
                         raterSubmission={this.props.raterSubmission}
                         finalDisplay={<FinalDisplay results={players}></FinalDisplay>}/> : null
                 } 

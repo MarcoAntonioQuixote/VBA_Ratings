@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Button,Table, ButtonDropdown,DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 import {Link} from 'react-router-dom';
 import NumberPad from './NumberPad';
+import SubmitRatings from './SubmitRatings';
 
 function ReviewHeader({player,skill, oddsEvensDropdown,noRatingsToPost}) {
     let instructions;
@@ -35,21 +36,21 @@ class ReviewRatings extends Component {
         this.state = {
             players: this.props.players,
             dropdownOpen: false,
-            oddsEvensSelect: "All",
+            oddsEvens: this.props.oddsEvens,
             toggleNumPad: false,
             playerToEdit: null,
             ratingToEdit: null,
-            raterResponsibleFor: "All",
-            playersResonsibleFor: null,
-            allRequiredRatingsComplete: true,
+            allRequiredRatingsComplete: false,
             noRequiredRatingsComplete: true,
-            finished: false,
+            showFinalRatingsModal: false,
+            thisRater: this.props.thisRater,
         }
 
         this.toggle = this.toggle.bind(this);
         this.editRating = this.editRating.bind(this);
         this.adjustRating = this.adjustRating.bind(this);
-        this.confirmRatingsSubmit = this.confirmRatingsSubmit.bind(this);
+        this.ratingsCompleteCheck = this.ratingsCompleteCheck.bind(this);
+        this.RatingsSubmissionModal = this.RatingsSubmissionModal.bind(this);
     }
 
     toggle(toggle, oddsEvens) {
@@ -60,12 +61,16 @@ class ReviewRatings extends Component {
         }
         else {
             this.setState({
-                oddsEvensSelect: oddsEvens,
-            });
+                oddsEvens: oddsEvens,
+            },()=> {
+                this.ratingsCompleteCheck();
+                this.props.oddsEvensSelect(oddsEvens);
+            })
         }
     }
 
     editRating(player,rating) {
+        if (this.state.showFinalRatingsModal) {return};
         if (this.state.toggleNumPad === true) {
             this.setState({
                 toggleNumPad: false,
@@ -114,34 +119,27 @@ class ReviewRatings extends Component {
         },3000);
     }
 
-    confirmRatingsSubmit() {
-        console.log("Review Ratings: ", this.state);
-    }
-
-    componentDidMount() {
+    ratingsCompleteCheck() {
         let playersToRate = null;
+        let ratedAll = true;
 
-        switch(this.state.raterResponsibleFor) {
+        switch(this.state.oddsEvens) {
             case "Odd":
-                playersToRate = this.state.players.map(player => {
-                    if (player % 2 === 1) return player;
-                })
+                playersToRate = this.state.players.filter(player => 
+                    player[0] % 2 === 1);
                 break;
             case "Even":
-                playersToRate = this.state.players.map(player => {
-                    if (player % 2 === 0) return player;
-                })
+                playersToRate = this.state.players.filter(player => 
+                    player[0] % 2 === 0);
                 break;
             default: 
                 playersToRate = this.state.players;
         }
 
         for (let y = 0; y < playersToRate.length; y++) {
-            for (let z = 1; z < playersToRate[y].length; z++) {
+            for (let z = 1; z < playersToRate[y].length-2; z++) {
                 if (!playersToRate[y][z]) {
-                    this.setState({
-                        allRequiredRatingsComplete: false
-                    });
+                    ratedAll = false;
                 }
                 if (playersToRate[y][z]) {
                     this.setState({
@@ -150,6 +148,31 @@ class ReviewRatings extends Component {
                 }
             }
         }
+
+        if (ratedAll === true) {
+            this.setState({
+                allRequiredRatingsComplete: true,
+            })
+        } else {
+            this.setState({
+                allRequiredRatingsComplete: false,
+            })
+        }
+
+    }
+
+    RatingsSubmissionModal() {
+        if (!this.state.allRequiredRatingsComplete) {
+            alert(`You have not finished entering all of your ratings for ${this.state.oddsEvens} Players. Pooey 💩`);
+            return;
+        }
+        this.setState({
+            showFinalRatingsModal: !this.state.showFinalRatingsModal,
+        },() => console.log("Finalized this dot state: ", this.state));
+    }
+
+    componentDidMount() {
+        this.ratingsCompleteCheck();
     }
 
     render() {
@@ -170,8 +193,8 @@ class ReviewRatings extends Component {
                     highlightRating = this.state.ratingToEdit;
                 }
 
-                if (player[0] % 2 === 0 && this.state.oddsEvensSelect==="Odd") return;
-                else if (player[0] % 2 === 1 & this.state.oddsEvensSelect==="Even") return;
+                if (player[0] % 2 === 0 && this.state.oddsEvens==="Odd") return;
+                else if (player[0] % 2 === 1 & this.state.oddsEvens==="Even") return;
             
                 return(
                     <tr key={player[0]}>
@@ -230,7 +253,7 @@ class ReviewRatings extends Component {
         const oddsEvens = 
             <ButtonDropdown  color='success' isOpen={this.state.dropdownOpen} toggle={() => this.toggle(true)}>
                 <DropdownToggle caret color="info" style={{marginTop: "5px"}}>
-                    {this.state.oddsEvensSelect}
+                    {this.state.oddsEvens}
                 </DropdownToggle>
                 <DropdownMenu color="info" style={{marginTop: "0px"}}>
                     <DropdownItem style={{marginTop: "0px"}} onClick={() => this.toggle(null, "All")}> 
@@ -255,7 +278,7 @@ class ReviewRatings extends Component {
                     { players.length > 0? 
                         <FinalDisplay results={players}/> : null }
                     {!allComplete ? 
-                        <h6>Click on any entered rating to change its value. Or click Rate 🔥 to enter your ratings for {this.state.oddsEvensSelect} players.</h6> : null }
+                        <h6>Click on any entered rating to change its value. Or click Rate 🔥 to enter your ratings for {this.state.oddsEvens} players.</h6> : <h6>You have finished rating {this.state.oddsEvens} players!</h6> }
                     <div className="row">
                         <div className="col">
                             <Link to="/rate">
@@ -263,10 +286,20 @@ class ReviewRatings extends Component {
                             </Link>
                         </div>
                         <div className="col">
-                            <Button onClick={() => this.confirmRatingsSubmit()} style={{marginBottom: "25px"}} color="dark" size='lg'>Finalize 💯</Button>
+                            <Button onClick={() => this.RatingsSubmissionModal()} style={{marginBottom: "25px"}} color="dark" size='lg'>Finalize 💯</Button>
                         </div>
                     </div>
-                </div>
+                </div> 
+                {this.state.showFinalRatingsModal?
+                    <SubmitRatings 
+                        toggle={this.RatingsSubmissionModal} 
+                        modalOpen={this.state.showFinalRatingsModal} 
+                        rater={this.state.thisRater}
+                        oddsEvens={this.state.oddsEvens} 
+                        raterSubmission={this.props.raterSubmission}
+                        finalDisplay={<FinalDisplay results={players}></FinalDisplay>}/> : null
+                } 
+                {/* You were able to pass FinalDisplay as a component and not just as a function by putting it in brackets and giving it props */}
             </div>
 
         )

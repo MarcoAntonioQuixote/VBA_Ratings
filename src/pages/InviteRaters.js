@@ -33,29 +33,24 @@ class InviteRaters extends Component {
                 message: "Change these instructions later. Most likely, you should have some sort of web link here so that raters can follow that link to the rating app created just for them. Good luck, amigo!",
                 date: date,
             }
-            // emailjs.send('service_kc8f3pz','VBA_rater_invite', emailTemplate,'-ddp6NqroMoy1LpaE')
-            // .then(function(response) {
-            //     console.log('SUCCESS!', response.status, response.text);
-            // }, function(error) {
-            //     console.log('FAILED...', error);
-            // });
+            emailjs.send('service_kc8f3pz','VBA_rater_invite', emailTemplate,'-ddp6NqroMoy1LpaE')
+            .then(function(response) {
+                console.log('SUCCESS!', response.status, response.text);
+            }, function(error) {
+                console.log('FAILED...', error);
+            });
         });
 
         if (session._id) {
             const res = await axios.get("/session");
             const session = res.data[res.data.length-1];
-            
             const updatedSession = {
                 players: this.state.players, //dont forget to change schema and refresh server with every update!
                 raters: this.state.raters,
                 id: session.id //*** This doesn't seem right!!!! */
             }
 
-            console.log("Session loaded from DB", session);
-            console.log("Entire updatedSession Object: ", updatedSession);
-
-            axios.put(`session/${this.props.session._id}`,updatedSession)
-            .then(res => console.log("res in saving: ", res.data))
+            axios.put(`session/${this.props.session._id}`,updatedSession);
 
             this.setState({
                 session: session,
@@ -73,8 +68,7 @@ class InviteRaters extends Component {
                 raters: this.state.raters,
             }
 
-            console.log("Entire newSession object: ", newSession);
-            axios.post('http://localhost:3001/session',newSession)
+            axios.post('http://localhost:3001/session',newSession);
             this.setState({invitationsSent:true, seeEmails: false});
         }
     }
@@ -86,7 +80,6 @@ class InviteRaters extends Component {
     }
 
     render () {
-        console.log("Invite Raters: ", this.state);
         const {raters, players} = this.state;
 
         const playersList = players.map(player => {

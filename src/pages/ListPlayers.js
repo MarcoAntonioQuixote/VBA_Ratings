@@ -43,9 +43,9 @@ function ListPlayers({players,deletePlayer,skillToShow,withData,raterNotes,oddsE
 
     if (skillToShow) {
         list = players.map(player => {
-        if (oddsEvens === "Odds" && player[0]%2 === 0) {
+        if (oddsEvens === "Odd" && player[0]%2 === 0) {
             return;
-        } else if (oddsEvens === "Evens" && player[0]%2 === 1) {
+        } else if (oddsEvens === "Even" && player[0]%2 === 1) {
             return;
         }
         if (withData) {

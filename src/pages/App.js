@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import {Routes, Route} from 'react-router-dom';
 import Header from './Header';
 import Players from "./Players";
@@ -8,11 +7,11 @@ import RaterHome from './RaterHome';
 import AdminHome from './AdminHome';
 import Raters from './Raters';
 import InviteRaters from './InviteRaters';
-import CurrentSession from './CurrentSession';
 import logo from '../images/vbaLogo.png';
 import '../styles.css';
 import ReviewRatings from './ReviewRatings';
-import SubmitRatings from './SubmitRatings'
+import RaterFinished from './RaterFinished';
+import axios from 'axios';
 
 class App extends Component {
 	constructor(props) {
@@ -35,8 +34,8 @@ class App extends Component {
 				["Markus","mr.markgutierrez@gmail.com"],
 				["Michael","pakawe4448@musezoo.com"],
 			],
-			startedSession: false, //should be false
-			oddsEvens: "All", //*** changes in Rater Mode
+			startedSession: false, 
+			oddsEvens: "All",
 			thisRater: [],
 			session: [],
 		}
@@ -108,20 +107,39 @@ class App extends Component {
 		}
 
 		const verifyRater = (rater) => {
+			console.log(rater);
 			this.setState({
 				thisRater: rater,
-			},()=>console.log(" from main ", this.state));
+			});
 		}
 
 		const loadSession = (session) => {
-			console.log("loaded session: ", session);
 			this.setState({
 				players: session.players,
 				raters: session.raters,
 				startedSession: true,
 				loadedSession: true,
 				session: session,
-			},() => console.log(this.state))
+			})
+		}
+
+		const oddsEvensSelect = (selection) => {
+			switch(selection) {
+				case "Odd": 
+					this.setState({
+						oddsEvens: "Odd"
+					});
+					break;
+				case "Even": 
+					this.setState({
+						oddsEvens: "Even"
+					});
+					break;
+				default:
+					this.setState({
+						oddsEvens: "All"
+					})
+			}
 		}
 
 		const updateRatings = (savedRatings,skill) => {
@@ -153,6 +171,22 @@ class App extends Component {
 			this.setState({
 				players: players,
 			});
+		}
+
+		const raterSubmission = (theRater,oddsEvens) => {
+			const finalizedRater = {
+				name: theRater[0],
+				email: theRater[1],
+				ratings: theRater[2],
+				oddsEvens: oddsEvens,
+				finished: true
+			}
+			this.setState({
+				finalizedRater: finalizedRater,
+				thisRater: [],
+			})
+
+			axios.put(`session/${session._id}/${finalizedRater.email}`,finalizedRater);
 		}
 
 	return (
@@ -193,12 +227,18 @@ class App extends Component {
 					update={updatePlayers} 
 					updateRatings={updateRatings}
 					session={session}
-					thisRater={thisRater} />} />
+					thisRater={thisRater} 
+					oddsEvens={this.state.oddsEvens}
+					oddsEvensSelect={oddsEvensSelect}/>} />
 				<Route path='review' element={<ReviewRatings 
 					players={this.state.players} 
-					updatePlayers={updatePlayers}/>} />
-				<Route path='submit' element={<SubmitRatings 
-					players={this.state.players} />} />
+					updatePlayers={updatePlayers}
+					oddsEvens={this.state.oddsEvens}
+					oddsEvensSelect={oddsEvensSelect}
+					thisRater={thisRater} 
+					raterSubmission={raterSubmission}/>} />
+				<Route path='raterFinished' element={<RaterFinished 
+					finalizedRater={this.state.finalizedRater} />} />
 			</Routes>
 		</div>
 		)
@@ -208,6 +248,11 @@ class App extends Component {
 export default App;
 
 /*
+
+Review ratings doesn't ask for save?
+
+cannot match by first name either.
+
 On mobile devices: what's the equivalent of mouse over/hover?
 
 •	Save button should notify that a message was saved for feedback!
@@ -227,6 +272,8 @@ On Review page: It says please finish rating even though it was finished (all en
 ** on the update page, saving while blank will remove the player's score. 
 
 //review ratings is where you want it displayed that a new player has been added (so you would need to get!!)
+
+turned off logo link to home!! Fix?
 
 AXIOS - make HTTP requests from react app
 Min 20

@@ -83,7 +83,7 @@ class NumberPad extends Component {
                             <Button className="col-2" color="info" onClick={() => this.BibEntry(null,null,true)}><strong>.</strong></Button>
                             <Button className="col" color="dark" onClick={() => this.BibEntry(0)}>0</Button>
                             <Button className="col-2" color="danger" 
-                            onClick={() => this.functionForButton(this.props.functionToPass,true)}>Cancel</Button>
+                            onClick={() => this.functionForButton(this.props.functionToPass,true)}>Back</Button>
                             <Button className="col-2" color="success" 
                             onClick={() => this.functionForButton(this.props.functionToPass)}>Save</Button>
                         </div>

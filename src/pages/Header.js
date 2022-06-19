@@ -6,9 +6,9 @@ const date = new Date().toDateString("en-us");
 const Header = ({logo,started,sessionDate}) => {
 	return (			
 		<div className="App-header">
-			<Link to="/">
+			{/* <Link to="/"> */}
 				<img className="logo" src={logo} alt="logo" />
-			</Link>
+			{/* </Link> */}
 			<p>🏐 Ratings Session 🔟</p>
 			{ started ?
 				<p style={{fontSize: "20px"}}>For session on {sessionDate || date}</p>	: null	

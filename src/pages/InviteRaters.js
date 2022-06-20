@@ -24,7 +24,6 @@ class InviteRaters extends Component {
 
     async sendInvites () {
         const session = this.state.session;
-        console.log("session: ", session); 
 
         this.state.raters.map(rater => {
             let emailTemplate = {

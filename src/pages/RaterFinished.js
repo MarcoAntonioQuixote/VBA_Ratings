@@ -2,7 +2,6 @@ import React from 'react';
 
 
 function RaterFinished({finalizedRater}) {
-    console.log("Finished: ", finalizedRater);
 
     return (
         <div className='header'>

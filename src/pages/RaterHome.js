@@ -9,10 +9,6 @@ class RaterHome extends Component {
         super(props)
         
         this.state = {
-            // players: [],
-            // raters: [], OBJECT CHECK -- TEST IF EMPTY.
-            // raterIdentified: false,
-
             players: this.props.players,
             raters: this.props.raters,
             thisRater: this.props.thisRater,
@@ -33,7 +29,9 @@ class RaterHome extends Component {
                 thisRater: this.state.raters[raterIndex],
                 raterIdentified: true,
             });
-            this.props.update(this.state.players);
+            
+            // this.props.update(this.state.players);
+            // this.props.update(this.state.players);
             this.props.verify(this.state.raters[raterIndex]);
             if (this.state.raters[raterIndex].finished) {
                 this.setState({
@@ -52,6 +50,7 @@ class RaterHome extends Component {
         let session = res.data[res.data.length-1];
 
         this.props.loadSession(session);
+        this.props.update(session.players);
 
         this.setState({
             raters: session.raters,
@@ -61,7 +60,6 @@ class RaterHome extends Component {
     
     componentDidMount() {
         this.syncSession();
-        console.log("Hi players: ", this.state.players);
     }
             
     render() {

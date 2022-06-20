@@ -58,7 +58,8 @@ function ListPlayers({players,deletePlayer,skillToShow,withData,raterNotes,oddsE
                 <div className="row" key={player[0]} style={{whiteSpace: "nowrap"}}> 
                     {!player[6] ? 
                         <div className="col" onClick={() => raterNotes(player)}>🗒️</div> : 
-                        <div className="col" onClick={() => raterNotes(player)} id={`TooltipFor${player[0]}`}>📝
+                        <div className="col" onClick={() => raterNotes(player)} id={`TooltipFor${player[0]}`}>
+                            📝
                             <UncontrolledTooltip placement="left" target={`TooltipFor${player[0]}`}>
                             {player[7]}
                             </UncontrolledTooltip>

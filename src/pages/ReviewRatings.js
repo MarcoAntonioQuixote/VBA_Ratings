@@ -62,7 +62,7 @@ class ReviewRatings extends Component {
         else {
             this.setState({
                 oddsEvens: oddsEvens,
-                thisRater: {...this.state.thisRater, oddsEvens: oddsEvens} //
+                thisRater: {...this.state.thisRater, oddsEvens: oddsEvens}
             },()=> {
                 this.ratingsCompleteCheck();
                 this.props.oddsEvensSelect(oddsEvens);
@@ -169,7 +169,7 @@ class ReviewRatings extends Component {
         }
         this.setState({
             showFinalRatingsModal: !this.state.showFinalRatingsModal,
-        },() => console.log("Finalized this dot state: ", this.state));
+        });
     }
 
     componentDidMount() {

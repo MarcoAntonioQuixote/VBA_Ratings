@@ -18,40 +18,8 @@ class App extends Component {
 		super(props);
 		
 		this.state = {
-			players: [
-				["1034","","","","","",false,""],
-				["207","","","","","",false,""],
-				["205","","","","","",false,""],
-				["310","","","","","",false,""],
-				["304","","","","","",false,""],
-				["308","","","","","",false,""],
-				["309","","","","","",false,""],
-				["004","","","","","",false,""],
-				["312","","","","","",false,""],
-			],
-			raters: [
-				{ 
-					name: "Samuel",
-					email: "strive2thrivetutoring@gmail.com",
-					oddsEvens: "All",
-					ratings: [],
-					finished: false,
-				},
-				{ 
-					name: "Markus",
-					email: "mr.markgutierrez@gmail.com",
-					oddsEvens: "All",
-					ratings: [],
-					finished: false,
-				},
-				{ 
-					name: "Michael",
-					email: "VBAprez@gmail.com",
-					oddsEvens: "All",
-					ratings: [],
-					finished: false,
-				}
-			],
+			players: [],
+			raters: [],
 			startedSession: false, 
 			oddsEvens: "All",
 			thisRater: [],
@@ -125,21 +93,19 @@ class App extends Component {
 		}
 
 		const verifyRater = (rater) => {
-			console.log(rater);
 			this.setState({
 				thisRater: rater,
 			});
 		}
 
 		const loadSession = (session) => {
-			console.log("Loaded: ", session);
 			this.setState({
 				players: session.players,
 				raters: session.raters,
 				startedSession: true,
 				loadedSession: true,
 				session: session,
-			}, ()=> console.log("Main state: ", this.state));
+			});
 		}
 
 		const oddsEvensSelect = (selection) => {
@@ -161,39 +127,7 @@ class App extends Component {
 			}
 		}
 
-		const updateRatings = (savedRatings,skill) => {
-
-			for (let p = 0; p < players.length; p++) {
-				switch (skill){
-					case "Serving":
-						if (savedRatings[1][p] === null) break;
-						players[p][1] = savedRatings[1][p];
-						break;
-					case "Passing/Setting":
-						if (savedRatings[2][p] === null) break;
-						players[p][2] = savedRatings[2][p];
-						break;
-					case "Defense":
-						if (savedRatings[3][p] === null) break;
-						players[p][3] = savedRatings[3][p];
-						break;
-					case "Attacking":
-						if (savedRatings[4][p] === null) break;
-						players[p][4] = savedRatings[4][p];
-						break;   
-					case "Blocking":
-						if (savedRatings[5][p] === null) break;
-						players[p][5] = savedRatings[5][p];
-						break;              
-				};
-			}
-			this.setState({
-				players: players,
-			});
-		}
-
 		const raterSubmission = (theRater) => {
-			console.log("The finalized rater: ", theRater);
 			const finalizedRater = { //OBJECT CHECK LAST!!
 				name: theRater.name,
 				email: theRater.email,
@@ -245,7 +179,6 @@ class App extends Component {
 				<Route path='rate' element={<Rate 
 					players={players} 
 					update={updatePlayers} 
-					updateRatings={updateRatings}
 					session={session}
 					thisRater={thisRater} 
 					oddsEvens={this.state.oddsEvens}

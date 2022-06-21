@@ -169,7 +169,7 @@ class ReviewRatings extends Component {
         }
         this.setState({
             showFinalRatingsModal: !this.state.showFinalRatingsModal,
-        });
+        },()=>console.log("State here: ", this.state));
     }
 
     componentDidMount() {
@@ -294,11 +294,10 @@ class ReviewRatings extends Component {
                 {this.state.showFinalRatingsModal?
                     <SubmitRatings 
                         toggle={this.RatingsSubmissionModal} 
-                        modalOpen={this.state.showFinalRatingsModal} 
+                        open={this.state.showFinalRatingsModal} 
                         rater={this.state.thisRater}
-                        // oddsEvens={this.state.oddsEvens} 
-                        raterSubmission={this.props.raterSubmission}
-                        finalDisplay={<FinalDisplay results={players}></FinalDisplay>}/> : null
+                        session={this.props.session}
+                        display={<FinalDisplay results={players}></FinalDisplay>}/> : null
                 } 
                 {/* You were able to pass FinalDisplay as a component and not just as a function by putting it in brackets and giving it props */}
             </div>

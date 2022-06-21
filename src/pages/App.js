@@ -11,7 +11,7 @@ import logo from '../images/vbaLogo.png';
 import '../styles.css';
 import ReviewRatings from './ReviewRatings';
 import RaterFinished from './RaterFinished';
-import axios from 'axios';
+
 
 class App extends Component {
 	constructor(props) {
@@ -89,6 +89,7 @@ class App extends Component {
 		const updatePlayers = (players) => {
 			this.setState({
 				players: players,
+				thisRater: {...thisRater, ratings: players}
 			},()=>this.orderPlayers());
 		}
 
@@ -125,22 +126,6 @@ class App extends Component {
 						oddsEvens: "All"
 					})
 			}
-		}
-
-		const raterSubmission = (theRater) => {
-			const finalizedRater = { //OBJECT CHECK LAST!!
-				name: theRater.name,
-				email: theRater.email,
-				ratings: theRater[2],
-				oddsEvens: theRater.oddsEvens,
-				finished: true
-			}
-			this.setState({
-				finalizedRater: finalizedRater,
-				thisRater: [],
-			})
-
-			axios.put(`session/${session._id}/${finalizedRater.email}`,finalizedRater);
 		}
 
 	return (
@@ -189,9 +174,9 @@ class App extends Component {
 					oddsEvens={this.state.oddsEvens}
 					oddsEvensSelect={oddsEvensSelect}
 					thisRater={thisRater} 
-					raterSubmission={raterSubmission}/>} />
+					session={session} />} />
 				<Route path='raterFinished' element={<RaterFinished 
-					finalizedRater={this.state.finalizedRater} />} />
+					thisRater={this.state.thisRater} />} />
 			</Routes>
 		</div>
 		)
@@ -227,6 +212,8 @@ On Review page: It says please finish rating even though it was finished (all en
 //review ratings is where you want it displayed that a new player has been added (so you would need to get!!)
 
 turned off logo link to home!! Fix?
+
+** Will it work if you go between odds/evens?
 
 AXIOS - make HTTP requests from react app
 Min 20

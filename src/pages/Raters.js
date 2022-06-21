@@ -30,7 +30,7 @@ class Raters extends Component {
 
             e.preventDefault();
             e.target.reset();
-            const lowercaseEmails = this.state.raters.map(rater => rater[1].toLowerCase());
+            const lowercaseEmails = this.state.raters.map(rater => rater.email.toLowerCase());
 
             if (raterName === "") {
                 alert("Give a name to the rater you want to add, silly. 😋");

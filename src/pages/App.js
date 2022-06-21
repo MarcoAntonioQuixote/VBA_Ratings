@@ -8,10 +8,9 @@ import AdminHome from './AdminHome';
 import Raters from './Raters';
 import InviteRaters from './InviteRaters';
 import logo from '../images/vbaLogo.png';
-import '../styles.css';
 import ReviewRatings from './ReviewRatings';
 import RaterFinished from './RaterFinished';
-
+import '../styles.css';
 
 class App extends Component {
 	constructor(props) {
